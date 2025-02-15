@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.7](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2025-02-15)
+
+
+### Bug Fixes
+
+* npm bin field format ([70af1c0](https://github.com/LearningNoob00000/DEB/commit/70af1c076f75b9eb1c7a9e3bcbdf8b2fd6517457))
+
 # [1.0.0-beta.6](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2025-02-15)
 
 
