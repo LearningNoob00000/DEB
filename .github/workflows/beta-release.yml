@@ -43,7 +43,7 @@ jobs:
       - name: Verify binaries exist
         run: |
           ls -la releases/
-          if [ ! -f "releases/deb-v*.exe" ] || [ ! -f "releases/deb-v*-linux" ] || [ ! -f "releases/deb-v*-macos" ]; then
+          if [ ! -f releases/*windows.exe ] || [ ! -f releases/*-linux ] || [ ! -f releases/*-macos ]; then
             echo "Missing binaries in releases directory"
             exit 1
           fi
