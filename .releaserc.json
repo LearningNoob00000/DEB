@@ -1,15 +1,23 @@
 {
-  "branches": ["master"],
+  "branches": [
+    "master",
+    {"name": "beta", "prerelease": true}
+  ],
   "plugins": [
-    "@semantic-release/commit-analyzer",
+    ["@semantic-release/commit-analyzer", {
+      "preset": "angular",
+      "releaseRules": [
+        {"type": "docs", "release": "patch"},
+        {"type": "refactor", "release": "patch"},
+        {"type": "style", "release": "patch"},
+        {"type": "test", "release": "patch"}
+      ]
+    }],
     "@semantic-release/release-notes-generator",
-    [
-      "@semantic-release/changelog",
-      {
-        "changelogFile": "CHANGELOG.md",
-        "changelogTitle": "# Changelog\n\nAll notable changes to this project will be documented in this file."
-      }
-    ],
+    ["@semantic-release/changelog", {
+      "changelogFile": "CHANGELOG.md",
+      "changelogTitle": "# DevEnvBootstrap Changelog\n\n*This is a beta release. APIs may change before the stable release.*"
+    }],
     "@semantic-release/npm",
     ["@semantic-release/git", {
       "assets": ["package.json", "CHANGELOG.md"],
@@ -18,7 +26,8 @@
     ["@semantic-release/github", {
       "assets": [
         {"path": "dist/bin/*", "label": "Binary distribution"}
-      ]
+      ],
+      "successComment": "🎉 This beta release is available on npm using `npm install dev-env-bootstrap@beta`"
     }]
   ]
 }
