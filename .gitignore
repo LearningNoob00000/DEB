@@ -3,6 +3,7 @@ node_modules/
 
 # Build
 dist/
+releases/
 
 # Tests
 coverage/
@@ -10,10 +11,7 @@ coverage/
 # IDE
 .vscode/
 .idea/
-
-# Logs
 *.log
-npm-debug.log*
 
 # Environment
 .env

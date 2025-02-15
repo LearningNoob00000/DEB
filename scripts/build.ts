@@ -8,7 +8,7 @@ const execAsync = promisify(exec);
 async function buildBinaries() {
   const pkg = await fs.readFile('package.json', 'utf-8');
   const { version } = JSON.parse(pkg);
-  const outDir = path.join(__dirname, '../dist/bin');
+  const outDir = path.join(__dirname, '../releases');
 
   // Ensure output directory exists
   await fs.mkdir(outDir, { recursive: true });

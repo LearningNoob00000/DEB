@@ -4,6 +4,14 @@
   "description": "Automated development environment bootstrapping tool",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "deb": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/bin/**"
+  ],
   "engines": {
     "node": ">=20.8.1"
   },
@@ -19,7 +27,7 @@
     "changelog": "standard-version --skip.tag",
     "benchmark": "ts-node --expose-gc scripts/benchmark.ts",
     "benchmark:ci": "ts-node --expose-gc scripts/benchmark.ts > benchmark-results.txt",
-    "build": "tsc && node scripts/build.ts",
+    "build": "tsc",
     "build:binaries": "ts-node scripts/build.ts",
     "postbuild:binaries": "chmod +x dist/bin/deb-*-linux dist/bin/deb-*-macos",
     "prerelease": "npm run build && npm run test",

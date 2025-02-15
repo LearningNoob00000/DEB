@@ -1,0 +1,41 @@
+# Source code
+src/
+tests/
+scripts/
+
+# Binary files
+dist/bin/
+
+# Development configs
+.github/
+.vscode/
+.editorconfig
+.eslintignore
+.eslintrc.*
+.prettierrc
+.commitlintrc.json
+jest.config.js
+tsconfig.json
+sonar-project.properties
+
+# Git files
+.git/
+.gitignore
+
+# Documentation
+docs/
+
+# CI/CD
+.husky/
+coverage/
+.nyc_output/
+
+# IDE files
+*.log
+.DS_Store
+.idea/
+
+# Development files
+*.test.ts
+*.spec.ts
+benchmark.*
