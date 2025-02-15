@@ -4,9 +4,7 @@
   "description": "Automated development environment bootstrapping tool",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "bin": {
-    "deb": "./dist/cli/index.js"
-  },
+  "bin": "dist/cli/index.js",
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts",

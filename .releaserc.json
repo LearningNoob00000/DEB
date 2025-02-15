@@ -25,7 +25,9 @@
     }],
     ["@semantic-release/github", {
       "assets": [
-        {"path": "dist/bin/*", "label": "Binary distribution"}
+        {"path": "releases/deb-v*.exe", "label": "Windows Binary"},
+        {"path": "releases/deb-v*-linux", "label": "Linux Binary"},
+        {"path": "releases/deb-v*-macos", "label": "macOS Binary"}
       ],
       "successComment": "🎉 This beta release is available on npm using `npm install dev-env-bootstrap@beta`"
     }]
