@@ -9,7 +9,7 @@ export const createCLI = (): Command => {
   const program = new Command()
     .name('deb')
     .description('Development environment bootstrapping tool')
-    .version('1.0.0-beta.7');
+    .version('1.0.0-beta.8');
 
   // Add scan and analyze commands
   program.addCommand(createScanCommand());
@@ -23,6 +23,11 @@ export const createCLI = (): Command => {
 
 // When running as a script (not imported as a module)
 if (require.main === module) {
-  const program = createCLI();
-  program.parse(process.argv);
+  try {
+    const program = createCLI();
+    program.parse();
+  } catch (error) {
+    console.error('Error:', error);
+    process.exit(1);
+  }
 }

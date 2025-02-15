@@ -29,6 +29,7 @@
     "benchmark": "ts-node --expose-gc scripts/benchmark.ts",
     "benchmark:ci": "ts-node --expose-gc scripts/benchmark.ts > benchmark-results.txt",
     "build": "tsc",
+    "postbuild": "chmod +x dist/cli/index.js",
     "build:binaries": "ts-node scripts/build.ts",
     "prerelease": "npm run build && npm run test",
     "release:beta": "semantic-release --prerelease beta"
@@ -73,6 +74,7 @@
   "dependencies": {
     "@types/inquirer": "^9.0.7",
     "@types/ora": "^3.1.0",
+    "commander": "^12.0.0",
     "inquirer": "^12.4.1"
   }
 }
