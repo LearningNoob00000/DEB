@@ -40,7 +40,15 @@ jobs:
       - name: Build binaries
         run: npm run build:binaries
 
-      - name: Beta Release
+      - name: Verify binaries exist
+        run: |
+          ls -la releases/
+          if [ ! -f "releases/deb-v*.exe" ] || [ ! -f "releases/deb-v*-linux" ] || [ ! -f "releases/deb-v*-macos" ]; then
+            echo "Missing binaries in releases directory"
+            exit 1
+          fi
+
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
