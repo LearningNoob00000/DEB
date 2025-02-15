@@ -1,6 +1,6 @@
 {
   "name": "dev-env-bootstrap",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.9",
   "description": "Automated development environment bootstrapping tool",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
