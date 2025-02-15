@@ -2,6 +2,14 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.2](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2025-02-15)
+
+
+### Bug Fixes
+
+* binary build and release process ([e25ae2a](https://github.com/LearningNoob00000/DEB/commit/e25ae2a41b9f9291fd7cc966165c505af39ed648))
+* exclude binaries from npm package ([94adbd2](https://github.com/LearningNoob00000/DEB/commit/94adbd2b175bcbfbaeb5b5c8b6c7c62c93f30df2))
+
 # 1.0.0-beta.1 (2025-02-15)
 
 
