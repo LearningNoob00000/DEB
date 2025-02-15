@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.8](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2025-02-15)
+
+
+### Bug Fixes
+
+* make CLI executable with complete command set ([8323627](https://github.com/LearningNoob00000/DEB/commit/832362732140bf1505c6cb03cc7ea73a584c5e03))
+
 # [1.0.0-beta.7](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2025-02-15)
 
 
