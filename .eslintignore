@@ -1,0 +1,6 @@
+# File: .eslintignore
+node_modules/
+dist/
+coverage/
+*.js
+!.eslintrc.js

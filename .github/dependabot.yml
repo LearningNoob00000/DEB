@@ -1,0 +1,41 @@
+# Dependabot configuration file
+
+version: 2
+updates:
+  # Enable npm dependency updates
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Add assignees and reviewers
+    assignees:
+      - "maintainers"
+    reviewers:
+      - "maintainers"
+    # Group updates together
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    # Configure pull request limits
+    open-pull-requests-limit: 10
+    # Add labels
+    labels:
+      - "dependencies"
+      - "automated"
+    # Configure version updates
+    versioning-strategy: increase
+    allow:
+      - dependency-type: "direct"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Enable GitHub Actions updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "github-actions"
+      - "automated"

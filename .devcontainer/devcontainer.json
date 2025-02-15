@@ -1,0 +1,21 @@
+{
+  "name": "DevEnvBootstrap",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:18",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-typescript-next",
+        "orta.vscode-jest",
+        "EditorConfig.EditorConfig"
+      ]
+    }
+  },
+  "forwardPorts": [],
+  "postCreateCommand": "npm install",
+  "remoteUser": "node"
+}

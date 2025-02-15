@@ -1,0 +1,64 @@
+{
+  "name": "dev-env-bootstrap",
+  "version": "0.1.0",
+  "description": "Automated development environment bootstrapping tool",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+  "test": "jest",
+  "test:watch": "jest --watch",
+  "test:coverage": "jest --coverage",
+   "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" --fix",
+  "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+  "prepare": "npx husky",
+  "semantic-release": "semantic-release",
+  "changelog": "standard-version --skip.tag",
+  "benchmark": "ts-node --expose-gc scripts/benchmark.ts",
+  "benchmark:ci": "ts-node --expose-gc scripts/benchmark.ts > benchmark-results.txt",
+  "build": "tsc && node scripts/build.ts",
+  "build:binaries": "ts-node scripts/build.ts",
+  "postbuild:binaries": "chmod +x dist/bin/deb-*-linux dist/bin/deb-*-macos"
+  },
+  "keywords": [
+    "development",
+    "environment",
+    "docker",
+    "automation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.1",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.13.1",
+    "@typescript-eslint/eslint-plugin": "^8.23.0",
+    "@typescript-eslint/parser": "^8.23.0",
+    "caxa": "3.0.1",
+    "eslint": "^9.20.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "jest-sonar-reporter": "^2.0.0",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.4.2",
+    "semantic-release": "^24.2.1",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/ora": "^3.1.0",
+    "inquirer": "^12.4.1"
+  }
+}
