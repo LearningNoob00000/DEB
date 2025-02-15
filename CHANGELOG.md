@@ -2,6 +2,14 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.6](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2025-02-15)
+
+
+### Bug Fixes
+
+* binary and release workflow configuration ([9c32842](https://github.com/LearningNoob00000/DEB/commit/9c3284228adef2bbc9dffa7f8bbca70391eef23d))
+* binary verification in release workflow ([9780d05](https://github.com/LearningNoob00000/DEB/commit/9780d0561425b98791a77cdc71ed18c0f45747a4))
+
 # [1.0.0-beta.5](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2025-02-15)
 
 
