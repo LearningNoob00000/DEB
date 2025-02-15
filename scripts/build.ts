@@ -1,15 +1,14 @@
-// scripts/build.ts
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { exec } from 'child_process';
-import { promisify } from 'util';
+const fs = require('fs').promises;
+const path = require('path');
+const { exec } = require('child_process');
+const { promisify } = require('util');
 
 const execAsync = promisify(exec);
 
 async function buildBinaries() {
   const pkg = await fs.readFile('package.json', 'utf-8');
   const { version } = JSON.parse(pkg);
-  const outDir = join(__dirname, '../dist/bin');
+  const outDir = path.join(__dirname, '../dist/bin');
 
   // Ensure output directory exists
   await fs.mkdir(outDir, { recursive: true });
@@ -25,7 +24,7 @@ async function buildBinaries() {
 
     for (const build of builds) {
       const outFile = `deb-v${version}-${build.name}${build.ext}`;
-      const command = `npx caxa --input "." --output "${join(outDir, outFile)}" -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/dist/cli/index.js"`;
+      const command = `npx caxa --input "." --output "${path.join(outDir, outFile)}" -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/dist/cli/index.js"`;
 
       console.log(`Building for ${build.name}...`);
       const { stdout, stderr } = await execAsync(command);

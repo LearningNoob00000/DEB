@@ -4,6 +4,9 @@
   "description": "Automated development environment bootstrapping tool (Beta)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=20.8.1"
+  },
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
@@ -33,9 +36,6 @@
   ],
   "author": "",
   "license": "MIT",
-  "engines": {
-    "node": ">=16.0.0"
-  },
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",
