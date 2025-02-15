@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.5](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2025-02-15)
+
+
+### Bug Fixes
+
+* release configuration and binary paths ([3b78ac4](https://github.com/LearningNoob00000/DEB/commit/3b78ac495b29aaf4d15cc8b19cd8b447d9fa8bfe))
+
 # [1.0.0-beta.4](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2025-02-15)
 
 
