@@ -50,5 +50,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: beta-binaries
-          path: dist/bin/
+          path: releases/
           if-no-files-found: error

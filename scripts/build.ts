@@ -24,13 +24,20 @@ async function buildBinaries() {
 
     for (const build of builds) {
       const outFile = `deb-v${version}-${build.name}${build.ext}`;
-      const command = `npx caxa --input "." --output "${path.join(outDir, outFile)}" -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/dist/cli/index.js"`;
-
+      const outPath = path.join(outDir, outFile);
+      
       console.log(`Building for ${build.name}...`);
+      const command = `npx caxa --input "." --output "${outPath}" -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/dist/cli/index.js"`;
+      
       const { stdout, stderr } = await execAsync(command);
-
       if (stdout) console.log(stdout);
       if (stderr) console.error(stderr);
+
+      // Set executable permissions for non-Windows builds
+      if (build.name !== 'windows') {
+        await fs.chmod(outPath, 0o755);
+        console.log(`Set executable permissions for ${outFile}`);
+      }
     }
 
     console.log('Build complete!');
