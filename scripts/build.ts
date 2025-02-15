@@ -6,20 +6,27 @@ const { promisify } = require('util');
 const execAsync = promisify(exec);
 
 async function buildBinaries() {
-  const pkg = await fs.readFile('package.json', 'utf-8');
-  const { version } = JSON.parse(pkg);
-  const outDir = path.join(__dirname, '../releases');
-
-  // Ensure output directory exists
-  await fs.mkdir(outDir, { recursive: true });
-
-  const builds = [
-    { name: 'windows', ext: '.exe' },
-    { name: 'macos', ext: '' },
-    { name: 'linux', ext: '' }
-  ];
-
   try {
+    // Read version from package.json
+    const pkg = await fs.readFile('package.json', 'utf-8');
+    const { version } = JSON.parse(pkg);
+    const outDir = path.join(__dirname, '../releases');
+
+    // Ensure output directory exists
+    await fs.mkdir(outDir, { recursive: true });
+
+    // Clean previous builds
+    const existingFiles = await fs.readdir(outDir);
+    for (const file of existingFiles) {
+      await fs.unlink(path.join(outDir, file));
+    }
+
+    const builds = [
+      { name: 'windows', ext: '.exe' },
+      { name: 'macos', ext: '' },
+      { name: 'linux', ext: '' }
+    ];
+
     console.log('Building binaries...');
 
     for (const build of builds) {
