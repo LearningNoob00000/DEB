@@ -7,14 +7,18 @@ import path from 'path';
 import { ProjectScanner } from '../../analyzers/project-scanner';
 import { ConfigManager, DockerConfig } from '../utils/config-manager';
 import { ConfigValidators } from '../utils/validators';
-import { ErrorMessages } from '../utils/error-messages';
 
 export function createExpressCommands(): Command[] {
   const analyzer = new ExpressAnalyzer();
   const generator = new ExpressDockerGenerator();
   const configManager = new ConfigManager();
 
-  const analyzeCommand = new Command('analyze')
+  // Create express parent command
+  const expressCommand = new Command('express')
+    .description('Express.js project commands');
+
+  // Add analyze as a subcommand of express
+  expressCommand.command('analyze')
     .description('Analyze Express.js project')
     .argument('[dir]', 'Project directory', '.')
     .option('--json', 'Output as JSON')
@@ -39,7 +43,8 @@ export function createExpressCommands(): Command[] {
       }
     });
 
-  const generateCommand = new Command('generate')
+  // Add generate as a subcommand of express
+  expressCommand.command('generate')
     .description('Generate Docker configuration')
     .argument('[dir]', 'Project directory', '.')
     .option('-d, --dev', 'Generate development configuration')
@@ -77,12 +82,12 @@ export function createExpressCommands(): Command[] {
         const dockerfile = generator.generate(projectInfo, {
           ...config,
           environment: envInfo.environment
-        });
+        } as DockerConfig);
 
         const dockerCompose = generator.generateCompose(projectInfo, {
           ...config,
           environment: envInfo.environment
-        });
+        } as DockerConfig);
 
         // Save configuration for future use
         if (options.interactive) {
@@ -112,5 +117,5 @@ export function createExpressCommands(): Command[] {
       }
     });
 
-  return [analyzeCommand, generateCommand];
+  return [expressCommand];
 }

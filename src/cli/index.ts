@@ -9,14 +9,15 @@ export const createCLI = (): Command => {
   const program = new Command()
     .name('deb')
     .description('Development environment bootstrapping tool')
-    .version('1.0.0-beta.8');
+    .version('1.0.0-beta.9');
 
-  // Add scan and analyze commands
   program.addCommand(createScanCommand());
+  
   program.addCommand(createAnalyzeCommand());
+  
+  const expressCommands = createExpressCommands();
 
-  // Add Express.js commands
-  createExpressCommands().forEach(cmd => program.addCommand(cmd));
+  expressCommands.forEach(cmd => program.addCommand(cmd));
 
   return program;
 };
@@ -25,6 +26,7 @@ export const createCLI = (): Command => {
 if (require.main === module) {
   try {
     const program = createCLI();
+
     program.parse();
   } catch (error) {
     console.error('Error:', error);
