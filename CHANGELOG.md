@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.10](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2025-02-16)
+
+
+### Bug Fixes
+
+* app entry ([e702245](https://github.com/LearningNoob00000/DEB/commit/e702245dc0869c1b6f94d1458ceec28636457cbe))
+
 # [1.0.0-beta.9](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2025-02-15)
 
 
