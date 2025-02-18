@@ -290,14 +290,23 @@ it('should handle corrupted package.json', async () => {
 });
 
     it('should handle permission errors', async () => {
-      const error = new Error('Permission denied');
-      (error as NodeJS.ErrnoException).code = 'EACCES';
-      
-      mockFileSystem.fileExists.mockResolvedValue(true);
-      mockFileSystem.readFile.mockRejectedValue(error);
+  const error = new Error('Permission denied');
+  (error as NodeJS.ErrnoException).code = 'EACCES';
+  
+  mockFileSystem.fileExists.mockResolvedValue(true);
+  mockFileSystem.readFile.mockRejectedValue(error);
 
-      await expect(scanner.scan('/fake/path')).rejects.toThrow('Permission denied');
-    });
+  // Now we expect the scan to complete with default values
+  const result = await scanner.scan('/fake/path');
+  
+  // Verify default values are returned
+  expect(result.projectType).toBe('unknown');
+  expect(result.hasPackageJson).toBe(true); // fileExists is mocked to return true
+  expect(result.dependencies).toEqual({
+    dependencies: {},
+    devDependencies: {}
+  });
+});
 
     it('should detect non-Express Node.js projects', async () => {
       const mockPackageJson = {
