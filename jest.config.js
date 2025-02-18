@@ -19,8 +19,8 @@ module.exports = {
 
     // Test patterns
     testMatch: [
-        '**/tests/**/*.test.ts'
-    ],
+  '**/tests/**/*.test.ts'
+],
 
     // Module resolution
     moduleNameMapper: {

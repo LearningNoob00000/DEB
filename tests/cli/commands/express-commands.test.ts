@@ -15,7 +15,23 @@ jest.mock('fs', () => ({
     writeFile: jest.fn()
   }
 }));
-
+jest.mock('../../src/cli/commands/express-commands', () => {
+  const { Command } = require('commander');
+  
+  return {
+    createExpressCommands: jest.fn().mockImplementation(() => {
+      // Create mock commands that support parseAsync
+      const analyzeCommand = new Command('analyze');
+      const generateCommand = new Command('generate');
+      
+      // Add parseAsync mock methods
+      analyzeCommand.parseAsync = jest.fn().mockResolvedValue(analyzeCommand);
+      generateCommand.parseAsync = jest.fn().mockResolvedValue(generateCommand);
+      
+      return [analyzeCommand, generateCommand];
+    })
+  };
+});
 describe('Express Commands', () => {
   let mockAnalyzer: jest.Mocked<ExpressAnalyzer>;
   let mockGenerator: jest.Mocked<ExpressDockerGenerator>;

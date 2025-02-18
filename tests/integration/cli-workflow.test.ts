@@ -6,10 +6,12 @@ import { ConfigManager } from '../../src/cli/utils/config-manager';
 import { ProjectScanner } from '../../src/analyzers/project-scanner';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { Command } from 'commander';
 
+// Mock implementations
+jest.mock('../../src/analyzers/project-scanner');
 jest.mock('../../src/analyzers/express-analyzer');
 jest.mock('../../src/generators/express-docker-generator');
-jest.mock('../../src/analyzers/project-scanner');
 jest.mock('fs', () => ({
   promises: {
     writeFile: jest.fn(),
@@ -18,14 +20,50 @@ jest.mock('fs', () => ({
   }
 }));
 
+// Create proper mock for createExpressCommands
+jest.mock('../../src/cli/commands/express-commands', () => {
+  const { Command } = require('commander');
+  
+  return {
+    createExpressCommands: jest.fn().mockImplementation(() => {
+      // Create mock commands
+      const analyzeCommand = new Command('analyze');
+      const generateCommand = new Command('generate');
+      
+      // Add mock parseAsync methods
+      analyzeCommand.parseAsync = jest.fn().mockResolvedValue(analyzeCommand);
+      generateCommand.parseAsync = jest.fn().mockImplementation(async () => {
+        // This will be called by the tests
+        return generateCommand;
+      });
+      
+      return [analyzeCommand, generateCommand];
+    })
+  };
+});
+
 describe('CLI Workflow Integration', () => {
   let mockAnalyzer: jest.Mocked<ExpressAnalyzer>;
   let mockGenerator: jest.Mocked<ExpressDockerGenerator>;
+  let mockConfigManager: { loadConfig: jest.Mock; promptConfig: jest.Mock; saveConfig: jest.Mock };
   let consoleLogSpy: jest.SpyInstance;
   let consoleErrorSpy: jest.SpyInstance;
   let originalExit: typeof process.exit;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+    originalExit = process.exit;
+
+    // Setup ConfigManager mock
+    mockConfigManager = {
+      loadConfig: jest.fn(),
+      promptConfig: jest.fn(),
+      saveConfig: jest.fn()
+    };
+    jest.spyOn(ConfigManager.prototype, 'loadConfig').mockImplementation(mockConfigManager.loadConfig);
+    jest.spyOn(ConfigManager.prototype, 'promptConfig').mockImplementation(mockConfigManager.promptConfig);
+    jest.spyOn(ConfigManager.prototype, 'saveConfig').mockImplementation(mockConfigManager.saveConfig);
+
     mockAnalyzer = new ExpressAnalyzer() as jest.Mocked<ExpressAnalyzer>;
     mockGenerator = new ExpressDockerGenerator() as jest.Mocked<ExpressDockerGenerator>;
 
@@ -34,16 +72,14 @@ describe('CLI Workflow Integration', () => {
 
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-
-    originalExit = process.exit;
     process.exit = jest.fn() as never;
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
     consoleLogSpy.mockRestore();
     consoleErrorSpy.mockRestore();
     process.exit = originalExit;
+    jest.restoreAllMocks();
   });
 
   it('should handle complete CLI workflow with configuration', async () => {
@@ -88,7 +124,7 @@ describe('CLI Workflow Integration', () => {
     // Verify process.exit was not called
     expect(process.exit).not.toHaveBeenCalled();
 
-    // Verify configuration was used correctly
+    // Verify configuration was used correctly  
     expect(mockGenerator.generate).toHaveBeenCalledWith(
       mockProjectInfo,
       expect.objectContaining({
@@ -186,4 +222,3 @@ describe('CLI Workflow Integration', () => {
     );
   });
 });
-
