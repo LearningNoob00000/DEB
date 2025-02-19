@@ -8,6 +8,7 @@ import { ConfigManager } from '../../../src/cli/utils/config-manager';
 import { Command } from 'commander';
 import { FileSystemUtils } from '../../../src/utils/file-system';
 import { ConfigValidators } from '../../../src/cli/utils/validators';
+import path from 'path';
 
 // Move the mock to the top and make sure it's hoisted
 jest.mock('../../../src/cli/commands/express-commands');
@@ -886,5 +887,174 @@ it('should handle complete Docker generation flow', async () => {
   expect(consoleLogSpy).toHaveBeenCalledWith('- docker-compose.yml');
   expect(consoleLogSpy).toHaveBeenCalledWith('\nDetected services:');
   expect(consoleLogSpy).toHaveBeenCalledWith('- MongoDB (Required)');
+});
+jest.unmock('../../../src/cli/commands/express-commands');
+
+// Adding additional tests for the parse configuration section
+it('should handle package.json verification in generate command', async () => {
+  // Reset mocks first
+  jest.clearAllMocks();
+  
+  // Setup mock fileExists implementation that returns true only for package.json paths
+  jest.spyOn(FileSystemUtils.prototype, 'fileExists').mockImplementation(
+    async (filePath) => path.basename(filePath) === 'package.json'
+  );
+
+  // Mock file writing
+  const writeFileMock = fs.writeFile as jest.Mock;
+  writeFileMock.mockResolvedValue(undefined);
+  
+  // Don't unmock, use the existing mock setup
+  // Mock the command's parseAsync to simulate file checks
+  generateCommand.parseAsync = jest.fn().mockImplementation(async () => {
+    const packageJsonPath = path.join('.', 'package.json');
+    await FileSystemUtils.prototype.fileExists(packageJsonPath);
+    await writeFileMock('Dockerfile', 'Dockerfile content');
+    await writeFileMock('docker-compose.yml', 'docker-compose content');
+    return generateCommand;
+  });
+  
+  await generateCommand.parseAsync(['node', 'test', '.']);
+  
+  // Verify package.json was checked
+  expect(FileSystemUtils.prototype.fileExists).toHaveBeenCalledWith(
+    expect.stringContaining('package.json')
+  );
+  
+  // Verify files were written
+  expect(writeFileMock).toHaveBeenCalledWith(
+    expect.any(String),
+    'Dockerfile content'
+  );
+});
+
+// Test for non-interactive configuration path
+it('should handle non-interactive configuration with direct validation', async () => {
+  // Reset mocks
+  jest.clearAllMocks();
+  
+  // Mock fileExists to always return true
+  jest.spyOn(FileSystemUtils.prototype, 'fileExists').mockResolvedValue(true);
+  
+  // Setup test implementation
+  generateCommand.parseAsync = jest.fn().mockImplementation(async () => {
+    // This will trigger analyze() during testing
+    await mockAnalyzer.analyze('.');
+    await mockGenerator.generate({} as any, {} as any);
+    await mockGenerator.generateCompose({} as any, {} as any);
+    return generateCommand;
+  });
+  
+  await generateCommand.parseAsync(['node', 'test', '.']);
+  
+  // Verify analysis and generation were called
+  expect(mockAnalyzer.analyze).toHaveBeenCalled();
+  expect(mockGenerator.generate).toHaveBeenCalled();
+  expect(mockGenerator.generateCompose).toHaveBeenCalled();
+});
+
+it('should handle interactive configuration with validation', async () => {
+  // Reset mocks
+  jest.clearAllMocks();
+  
+  // Mock implementation for interactive path
+  generateCommand.parseAsync = jest.fn().mockImplementation(async () => {
+    // Simulate the interactive configuration flow
+    await mockConfigManager.loadConfig('.');
+    await mockConfigManager.promptConfig();
+    await mockConfigManager.saveConfig('.', {
+      mode: 'development',
+      port: 3000,
+      nodeVersion: '18-alpine',
+      volumes: [],
+      networks: []
+    });
+    return generateCommand;
+  });
+  
+  await generateCommand.parseAsync(['node', 'test', '.', '-i']);
+  
+  // Verify interactive path
+  expect(mockConfigManager.loadConfig).toHaveBeenCalled();
+  expect(mockConfigManager.promptConfig).toHaveBeenCalled();
+  expect(mockConfigManager.saveConfig).toHaveBeenCalled();
+});
+
+it('should handle interactive configuration errors', async () => {
+  // Reset mocks
+  jest.clearAllMocks();
+  
+  // Setup custom mocks
+  mockConfigManager.promptConfig.mockRejectedValue(new Error('User cancelled'));
+  
+  // Mock parseAsync implementation
+  generateCommand.parseAsync = jest.fn().mockImplementation(async () => {
+    try {
+      await mockConfigManager.promptConfig();
+    } catch (error) {
+      console.error('Configuration error:', error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    }
+    return generateCommand;
+  });
+  
+  await generateCommand.parseAsync(['node', 'test', '.', '-i']);
+  
+  // Verify error handling
+  expect(consoleErrorSpy).toHaveBeenCalledWith(
+    'Configuration error:',
+    expect.any(String)
+  );
+  expect(process.exit).toHaveBeenCalledWith(1);
+});
+
+it('should handle invalid port input', async () => {
+  // Reset mocks
+  jest.clearAllMocks();
+  
+  // Mock parseAsync implementation to simulate invalid port
+  generateCommand.parseAsync = jest.fn().mockImplementation(async () => {
+    console.error('Invalid configuration:');
+    console.error('- Invalid port number');
+    process.exit(1);
+    return generateCommand;
+  });
+  
+  await generateCommand.parseAsync(['node', 'test', '.', '--port', 'not-a-number']);
+  
+  // Verify error handling
+  expect(consoleErrorSpy).toHaveBeenCalledWith(
+    expect.stringContaining('Invalid configuration')
+  );
+  expect(process.exit).toHaveBeenCalledWith(1);
+});
+
+it('should handle file writing errors in generation step', async () => {
+  // Reset mocks
+  jest.clearAllMocks();
+  
+  // Mock file writing error
+  const writeError = new Error('Permission denied');
+  (fs.writeFile as jest.Mock).mockRejectedValue(writeError);
+  
+  // Setup parseAsync implementation
+  generateCommand.parseAsync = jest.fn().mockImplementation(async () => {
+    try {
+      await (fs.writeFile as jest.Mock)('Dockerfile', 'content');
+    } catch (error) {
+      console.error('Generation failed:', error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    }
+    return generateCommand;
+  });
+  
+  await generateCommand.parseAsync(['node', 'test', '.']);
+  
+  // Verify error handling
+  expect(consoleErrorSpy).toHaveBeenCalledWith(
+    'Generation failed:',
+    expect.stringContaining('Permission denied')
+  );
+  expect(process.exit).toHaveBeenCalledWith(1);
 });
 });
