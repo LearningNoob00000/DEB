@@ -1,4 +1,4 @@
-// tests/benchmarks/cli-benchmarks.ts
+// tests/benchmarks/cli-benchmarks.test.ts
 import { Benchmark } from '../../src/utils/benchmark';
 import { ProjectScanner } from '../../src/analyzers/project-scanner';
 import { ExpressAnalyzer } from '../../src/analyzers/express-analyzer';
@@ -40,6 +40,11 @@ describe('CLI Performance Benchmarks', () => {
       // For testing paths like C:\fake\path\package.json
       if (filePath.includes('package.json')) return JSON.stringify(mockPackageJson);
       if (filePath.includes('.env')) return mockEnvContent;
+      if (filePath.includes('index.js')) return `
+        const express = require('express');
+        const app = express();
+        app.listen(3000);
+      `;
       return '';  // Return empty string for any other files
     });
   };
@@ -69,10 +74,11 @@ describe('CLI Performance Benchmarks', () => {
     console.log(Benchmark.formatResults(result));
   });
 
-  it.skip('should benchmark Express analysis performance', async () => {
-    // Mock actual filesystem calls
+  it('should benchmark Express analysis performance', async () => {
+    // Create an instance with mocked filesystem
     const analyzer = new ExpressAnalyzer();
-    // This test was problematic because file path handling was inconsistent
+
+    // Override the file path handling
     const result = await Benchmark.run(
       async () => {
         await analyzer.analyze('/fake/path');
@@ -131,34 +137,51 @@ describe('CLI Performance Benchmarks', () => {
     console.log(Benchmark.formatResults(result));
   });
 
-  it.skip('should benchmark environment analysis performance', async () => {
-    // Create a complex environment setup
-    const complexEnv = Array.from({ length: 100 }, (_, i) => {
-      return `SERVICE_${i}_URL=http://localhost:${8000 + i}
+  it('should benchmark environment analysis performance', async () => {
+  // Create a complex environment setup
+  const complexEnv = Array.from({ length: 100 }, (_, i) => {
+    return `SERVICE_${i}_URL=http://localhost:${8000 + i}
 SERVICE_${i}_KEY=key${i}
 SERVICE_${i}_SECRET=secret${i}`;
-    }).join('\n');
+  }).join('\n');
 
-    jest.spyOn(FileSystemUtils.prototype, 'readFile')
-      .mockResolvedValue(complexEnv);
-
-    const analyzer = new ExpressAnalyzer();
-    const result = await Benchmark.run(
-      async () => {
-        await analyzer.analyze('/fake/path');
-      },
-      {
-        name: 'Environment Analysis (100 services)',
-        iterations: 100,
-        warmupIterations: 10
-      }
-    );
-
-    expect(result.operationsPerSecond).toBeGreaterThan(50);
-    console.log(Benchmark.formatResults(result));
+  // Create a new mock implementation instead of reusing the original
+  jest.spyOn(FileSystemUtils.prototype, 'readFile').mockImplementation(async (filePath: string) => {
+    const basename = path.basename(filePath);
+    if (basename === '.env' || filePath.includes('.env')) {
+      return complexEnv;
+    }
+    if (basename === 'package.json' || filePath.includes('package.json')) {
+      return JSON.stringify({
+        dependencies: {
+          'express': '^4.17.1'
+        },
+        devDependencies: {
+          'typescript': '^4.5.0'
+        }
+      });
+    }
+    return '';
   });
 
-  it.skip('should benchmark full CLI workflow', async () => {
+  const analyzer = new ExpressAnalyzer();
+  const result = await Benchmark.run(
+    async () => {
+      await analyzer.analyze('/fake/path');
+    },
+    {
+      name: 'Environment Analysis (100 services)',
+      iterations: 100,
+      warmupIterations: 10
+    }
+  );
+
+  expect(result.operationsPerSecond).toBeGreaterThan(50);
+  console.log(Benchmark.formatResults(result));
+});
+
+  it('should benchmark full CLI workflow', async () => {
+    // Use our improved mocks with the updated ExpressAnalyzer
     const scanner = new ProjectScanner();
     const analyzer = new ExpressAnalyzer();
     const generator = new ExpressDockerGenerator();
