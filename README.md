@@ -1,9 +1,9 @@
 # DevEnvBootstrap (DEB)
 
 [![GitHub license](https://img.shields.io/github/license/SpongeBUG/DEB)](https://github.com/SpongeBUG/DEB/blob/master/LICENSE)
-[![npm version](https://img.shields.io/npm/v/deb-tool/beta.svg)](https://www.npmjs.com/package/deb-tool)
+[![npm version](https://img.shields.io/npm/v/deb-tool.svg)](https://www.npmjs.com/package/deb-tool)
 [![Build Status](https://github.com/SpongeBUG/DEB/workflows/CI/badge.svg?branch=master)](https://github.com/SpongeBUG/DEB/actions)
-[![semantic-release: beta](https://img.shields.io/badge/semantic--release-beta-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+[![semantic-release](https://img.shields.io/badge/semantic--release-enabled-brightgreen.svg?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 [![Test Coverage](https://img.shields.io/badge/coverage-82%25-brightgreen.svg)](https://github.com/SpongeBUG/DEB/actions)
 
 > 🚀 A comprehensive CLI tool for automatically bootstrapping Docker-based development environments for Node.js/Express projects. Analyzes project structure, detects required services, and generates optimized configurations for both development and production environments.
@@ -21,10 +21,10 @@
 
 ```bash
 # Install globally
-npm install -g deb-tool@beta
+npm install -g deb-tool
 
 # Or use it directly with npx
-npx deb-tool@beta
+npx deb-tool
 ```
 
 ## Quick Start
@@ -131,7 +131,7 @@ Example configuration:
 
 ## Project Status
 
-Current Version: [![npm version](https://img.shields.io/npm/v/deb-tool/beta.svg)](https://www.npmjs.com/package/deb-tool)
+Current Version: [![npm version](https://img.shields.io/npm/v/deb-tool.svg)](https://www.npmjs.com/package/deb-tool)
 
 | Feature                | Status |
 |------------------------|--------|
