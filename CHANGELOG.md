@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.13](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2025-02-20)
+
+
+### Features
+
+* rename package for npm publishing ([b9818e7](https://github.com/SpongeBUG/DEB/commit/b9818e7aafddc8da8f0551bed5966ca6caad1a1f))
+
 # [1.0.0-beta.12](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-02-20)
 
 
