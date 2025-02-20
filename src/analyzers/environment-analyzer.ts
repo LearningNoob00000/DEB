@@ -27,37 +27,42 @@ export class EnvironmentAnalyzer {
     this.initializeServicePatterns();
   }
 
-  private initializeServicePatterns() {
+  private initializeServicePatterns(): void {
     this.servicePatterns = [
       {
         name: 'MongoDB',
         pattern: /MONGODB?_(?:URI|URL|HOST|PRIMARY|SECONDARY|REPLICA)/i,
-        urlExtractor: (value) => value.includes('://') ? value : `mongodb://${value}`
+        urlExtractor: (value: string): string => 
+          value.includes('://') ? value : `mongodb://${value}`,
       },
       {
         name: 'Database',
         pattern: /(POSTGRES(?:QL)?|DATABASE)_(?:URI|URL|HOST|PRIMARY|SECONDARY)/i,
-        urlExtractor: (value) => value.includes('://') ? value : `postgresql://${value}`
+        urlExtractor: (value: string): string => 
+          value.includes('://') ? value : `postgresql://${value}`,
       },
       {
         name: 'Redis',
         pattern: /REDIS_(?:URI|URL|HOST|CACHE|QUEUE)/i,
-        urlExtractor: (value) => value.includes('://') ? value : `redis://${value}`
+        urlExtractor: (value: string): string => 
+          value.includes('://') ? value : `redis://${value}`,
       },
       {
         name: 'RabbitMQ',
         pattern: /RABBITMQ_(?:URI|URL|HOST)/i,
-        urlExtractor: (value) => value.includes('://') ? value : `amqp://${value}`
+        urlExtractor: (value: string): string => 
+          value.includes('://') ? value : `amqp://${value}`,
       },
       {
         name: 'Elasticsearch',
         pattern: /ELASTIC(?:SEARCH)?_(?:URI|URL|HOST)/i,
-        urlExtractor: (value) => value.includes('://') ? value : `http://${value}`
+        urlExtractor: (value: string): string => 
+          value.includes('://') ? value : `http://${value}`,
       },
       {
         name: 'Kafka',
-        pattern: /KAFKA_(?:BROKERS|URI|URL|HOST)/i
-      }
+        pattern: /KAFKA_(?:BROKERS|URI|URL|HOST)/i,
+      },
     ];
   }
 
@@ -69,7 +74,7 @@ export class EnvironmentAnalyzer {
       const result: EnvironmentConfig = {
         variables: {},
         hasEnvFile: false,
-        services: []
+        services: [],
       };
 
       // Check for .env file
@@ -82,7 +87,10 @@ export class EnvironmentAnalyzer {
           result.variables = this.parseEnvFile(envContent);
           result.services = this.detectServices(result.variables);
         } catch (error) {
-          if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'EACCES') {
+          if (
+            error instanceof Error &&
+            (error as NodeJS.ErrnoException).code === 'EACCES'
+          ) {
             throw new Error('Permission denied when reading .env file');
           }
           result.hasEnvFile = false;
@@ -98,8 +106,10 @@ export class EnvironmentAnalyzer {
           const exampleServices = this.detectServices(exampleVars);
           
           // Merge services without duplicates
-          const existingNames = new Set(result.services.map(s => s.name));
-          const uniqueExampleServices = exampleServices.filter(s => !existingNames.has(s.name));
+          const existingNames = new Set(result.services.map((s) => s.name));
+          const uniqueExampleServices = exampleServices.filter(
+            (s) => !existingNames.has(s.name)
+          );
           result.services = [...result.services, ...uniqueExampleServices];
         }
       } catch (error) {
@@ -108,7 +118,9 @@ export class EnvironmentAnalyzer {
 
       return result;
     } catch (error) {
-      throw new Error(`Environment analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Environment analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -136,63 +148,65 @@ export class EnvironmentAnalyzer {
   }
 
   private detectServices(variables: Record<string, string>): EnvironmentConfig['services'] {
-  const services: EnvironmentConfig['services'] = [];
-  const serviceGroups = new Map<string, Set<string>>();
+    const services: EnvironmentConfig['services'] = [];
+    const serviceGroups = new Map<string, Set<string>>();
 
-  // Process each environment variable
-  for (const [key, value] of Object.entries(variables)) {
-    // Check if it's optional (prefixed with OPTIONAL_)
-    const isOptional = key.startsWith('OPTIONAL_');
-    const serviceKey = isOptional ? key.replace('OPTIONAL_', '') : key;
+    // Process each environment variable
+    for (const [key, value] of Object.entries(variables)) {
+      // Check if it's optional (prefixed with OPTIONAL_)
+      const isOptional = key.startsWith('OPTIONAL_');
+      const serviceKey = isOptional ? key.replace('OPTIONAL_', '') : key;
 
-    // Check against service patterns
-    for (const { name, pattern, urlExtractor } of this.servicePatterns) {
-      if (pattern.test(serviceKey)) {
-        let serviceName = name;
-        let baseKey = name;
+      // Check against service patterns
+      for (const { name, pattern, urlExtractor } of this.servicePatterns) {
+        if (pattern.test(serviceKey)) {
+          let serviceName = name;
+          let baseKey = name;
 
-        // Extract role identifier (PRIMARY, SECONDARY, CACHE, QUEUE)
-        const roleMatch = serviceKey.match(/(PRIMARY|SECONDARY|CACHE|QUEUE|REPLICA)/i);
-        let role = '';
+          // Extract role identifier (PRIMARY, SECONDARY, CACHE, QUEUE)
+          const roleMatch = serviceKey.match(
+            /(PRIMARY|SECONDARY|CACHE|QUEUE|REPLICA)/i
+          );
+          let role = '';
 
-        // Handle role identifiers
-        if (roleMatch) {
-          role = roleMatch[1];
-          baseKey = `${name}_${role}`;
+          // Handle role identifiers
+          if (roleMatch) {
+            role = roleMatch[1];
+            baseKey = `${name}_${role}`;
+          }
+
+          // For environment-specific configurations (DEV_, PROD_, etc.)
+          const envMatch = serviceKey.match(/^(DEV_|PROD_|TEST_|STAGE_)/);
+          if (envMatch) {
+            serviceName = name;
+            baseKey = `${envMatch[1]}${baseKey}`;
+          }
+
+          // Track service instances
+          if (!serviceGroups.has(baseKey)) {
+            serviceGroups.set(baseKey, new Set());
+          }
+          serviceGroups.get(baseKey)!.add(key);
+
+          // Format the service name
+          if (role) {
+            serviceName = `${name}`;
+          }
+
+          // Handle credential information in URLs
+          const serviceUrl = urlExtractor ? urlExtractor(value) : value;
+
+          services.push({
+            name: serviceName,
+            url: serviceUrl ?? value,
+            required: !isOptional,
+          });
+
+          break;
         }
-
-        // For environment-specific configurations (DEV_, PROD_, etc.)
-        const envMatch = serviceKey.match(/^(DEV_|PROD_|TEST_|STAGE_)/);
-        if (envMatch) {
-          serviceName = name;
-          baseKey = `${envMatch[1]}${baseKey}`;
-        }
-
-        // Track service instances
-        if (!serviceGroups.has(baseKey)) {
-          serviceGroups.set(baseKey, new Set());
-        }
-        serviceGroups.get(baseKey)!.add(key);
-
-        // Format the service name
-        if (role) {
-          serviceName = `${name}`;
-        }
-
-        // Handle credential information in URLs
-        const serviceUrl = urlExtractor ? urlExtractor(value) : value;
-
-        services.push({
-          name: serviceName,
-          url: serviceUrl ?? value,
-          required: !isOptional
-        });
-
-        break;
       }
     }
-  }
 
-  return services;
-}
+    return services;
+  }
 }
