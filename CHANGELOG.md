@@ -2,6 +2,35 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# 1.0.0 (2025-02-20)
+
+
+### Bug Fixes
+
+* app entry ([e702245](https://github.com/SpongeBUG/DEB/commit/e702245dc0869c1b6f94d1458ceec28636457cbe))
+* binary and release workflow configuration ([9c32842](https://github.com/SpongeBUG/DEB/commit/9c3284228adef2bbc9dffa7f8bbca70391eef23d))
+* binary build and release process ([e25ae2a](https://github.com/SpongeBUG/DEB/commit/e25ae2a41b9f9291fd7cc966165c505af39ed648))
+* binary verification in release workflow ([9780d05](https://github.com/SpongeBUG/DEB/commit/9780d0561425b98791a77cdc71ed18c0f45747a4))
+* binary versioning and package bin field ([d85f36a](https://github.com/SpongeBUG/DEB/commit/d85f36a0b6441844ca19f31f586131c7837aa779))
+* exclude binaries from npm package ([94adbd2](https://github.com/SpongeBUG/DEB/commit/94adbd2b175bcbfbaeb5b5c8b6c7c62c93f30df2))
+* make CLI executable with complete command set ([8323627](https://github.com/SpongeBUG/DEB/commit/832362732140bf1505c6cb03cc7ea73a584c5e03))
+* make CLI executalbe and add commander ([7ca7178](https://github.com/SpongeBUG/DEB/commit/7ca71780b0ac0a8634c46ab81e75b5202029300f))
+* npm bin field format ([70af1c0](https://github.com/SpongeBUG/DEB/commit/70af1c076f75b9eb1c7a9e3bcbdf8b2fd6517457))
+* npm readme.md ([5fc09a4](https://github.com/SpongeBUG/DEB/commit/5fc09a4f4feeef64ef12d25fe6d7d62d3ca89084))
+* release configuration and binary paths ([3b78ac4](https://github.com/SpongeBUG/DEB/commit/3b78ac495b29aaf4d15cc8b19cd8b447d9fa8bfe))
+* release configuration and binary paths ([3988820](https://github.com/SpongeBUG/DEB/commit/398882037dadd7315cc417404f6818ea5ed0849c))
+* release step ([393ccf9](https://github.com/SpongeBUG/DEB/commit/393ccf9728348e131b09752f059aa9d46febf751))
+* remove debug logging and finalize CLI commands ([4c7628f](https://github.com/SpongeBUG/DEB/commit/4c7628f3aab494b98eab85718da2e9610b75c0d7))
+* upload-artifact@v3 to upload-artifact@v4 ([f3f035f](https://github.com/SpongeBUG/DEB/commit/f3f035f89669a3facf22b770516eaade9d68824f))
+
+
+### Features
+
+* complete test suite and documentation ([a7dabfa](https://github.com/SpongeBUG/DEB/commit/a7dabfa69fb8e66d63b7e6cc84f683d3fcad1101)), closes [#42](https://github.com/SpongeBUG/DEB/issues/42)
+* initial beta release ([1ee7051](https://github.com/SpongeBUG/DEB/commit/1ee705114f670d824c458d5bfea68fbc7f88ffda))
+* initial beta release for new npm account ([e6a513c](https://github.com/SpongeBUG/DEB/commit/e6a513cf3b6a562e0babf834d24162fe8f9601ae))
+* rename package for npm publishing ([b9818e7](https://github.com/SpongeBUG/DEB/commit/b9818e7aafddc8da8f0551bed5966ca6caad1a1f))
+
 # [1.0.0-beta.15](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2025-02-20)
 
 
