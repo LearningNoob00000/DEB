@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+## [1.0.3](https://github.com/SpongeBUG/DEB/compare/v1.0.2...v1.0.3) (2025-02-20)
+
+
+### Bug Fixes
+
+* add return types and fix formatting in environment-analyzer ([393dab9](https://github.com/SpongeBUG/DEB/commit/393dab96804442e246d39f6db68ba36f1e276904))
+
 ## [1.0.2](https://github.com/SpongeBUG/DEB/compare/v1.0.1...v1.0.2) (2025-02-20)
 
 
