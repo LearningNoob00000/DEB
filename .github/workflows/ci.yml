@@ -63,4 +63,5 @@ jobs:
     - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_IGNORE_MISSING_ISSUES: true
       run: npx semantic-release
