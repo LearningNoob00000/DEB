@@ -11,8 +11,14 @@
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts",
-    "!dist/bin/**"
+    "!dist/bin/**",
+    "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpongeBUG/DEB.git"
+  },
+  "homepage": "https://github.com/SpongeBUG/DEB#readme",
   "engines": {
     "node": ">=20.8.1"
   },
