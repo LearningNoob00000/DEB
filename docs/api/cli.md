@@ -76,7 +76,7 @@ function createScanCommand(): Command;
 
 Usage:
 ```typescript
-import { createScanCommand } from 'dev-env-bootstrap';
+import { createScanCommand } from 'deb-tool';
 const scanCommand = createScanCommand();
 ```
 
@@ -108,7 +108,7 @@ function createCLI(): Command;
 
 Usage:
 ```typescript
-import { createCLI } from 'dev-env-bootstrap';
+import { createCLI } from 'deb-tool';
 const cli = createCLI();
 cli.parse(process.argv);
 ```
@@ -118,7 +118,7 @@ cli.parse(process.argv);
 ### Project Scanning
 
 ```typescript
-import { ProjectScanner } from 'dev-env-bootstrap';
+import { ProjectScanner } from 'deb-tool';
 
 const scanner = new ProjectScanner();
 const result = await scanner.scan('./my-project');
@@ -127,7 +127,7 @@ const result = await scanner.scan('./my-project');
 ### Express Analysis
 
 ```typescript
-import { ExpressAnalyzer } from 'dev-env-bootstrap';
+import { ExpressAnalyzer } from 'deb-tool';
 
 const analyzer = new ExpressAnalyzer();
 const result = await analyzer.analyze('./my-express-app');
@@ -136,7 +136,7 @@ const result = await analyzer.analyze('./my-express-app');
 ### Environment Analysis
 
 ```typescript
-import { EnvironmentAnalyzer } from 'dev-env-bootstrap';
+import { EnvironmentAnalyzer } from 'deb-tool';
 
 const analyzer = new EnvironmentAnalyzer();
 const result = await analyzer.analyze('./my-project');
@@ -203,7 +203,7 @@ cli.on('analyze:complete', (result: ExpressProjectInfo) => {});
 Complete TypeScript type definitions are available:
 
 ```typescript
-import { ProjectInfo, ExpressProjectInfo, EnvironmentConfig } from 'dev-env-bootstrap';
+import { ProjectInfo, ExpressProjectInfo, EnvironmentConfig } from 'deb-tool';
 ```
 
 ## See Also

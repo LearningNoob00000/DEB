@@ -11,8 +11,8 @@ By participating in this project, you agree to abide by our Code of Conduct. Ple
 1. Fork the repository
 2. Clone your fork:
 ```bash
-git clone https://github.com/your-username/dev-env-bootstrap.git
-cd dev-env-bootstrap
+git clone https://github.com/your-username/deb-tool.git
+cd deb-tool
 ```
 
 3. Install dependencies:
@@ -29,8 +29,8 @@ git checkout -b feature/your-feature-name
 
 ### Prerequisites
 
-- Node.js >= 16
-- npm >= 7
+- Node.js >= 20
+- npm >= 8
 - Docker and Docker Compose
 - Git
 
@@ -160,11 +160,11 @@ describe('UserService', () => {
 - Test service interactions
 - Use actual database when necessary
 
-### E2E Tests
+### Performance Tests
 
-- Place in `tests/e2e/`
-- Test complete workflows
-- Use real Docker environment
+- Place in `tests/benchmarks/`
+- Test resource usage and operation speed
+- Use the Benchmark utility
 
 ## Documentation Guidelines
 
@@ -244,4 +244,4 @@ Include:
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the project's license.
+By contributing, you agree that your contributions will be licensed under the project's MIT license.

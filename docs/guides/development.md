@@ -17,8 +17,8 @@ This guide provides detailed information for developers working on the DevEnvBoo
 
 1. Clone repository:
 ```bash
-git clone https://github.com/your-username/dev-env-bootstrap.git
-cd dev-env-bootstrap
+git clone https://github.com/your-username/deb-tool.git
+cd deb-tool
 ```
 
 2. Install dependencies:
@@ -59,7 +59,7 @@ npm run build
 ## Project Structure
 
 ```
-dev-env-bootstrap/
+deb-tool/
 ├── src/
 │   ├── analyzers/      # Project analysis
 │   ├── cli/           # CLI implementation

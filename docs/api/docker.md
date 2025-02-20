@@ -30,7 +30,7 @@ class ExpressDockerGenerator {
 
 #### Basic Dockerfile Generation
 ```typescript
-import { ExpressDockerGenerator } from 'dev-env-bootstrap';
+import { ExpressDockerGenerator } from 'deb-tool';
 
 const generator = new ExpressDockerGenerator();
 
@@ -73,7 +73,7 @@ class DockerConfigGenerator {
 ### Usage Examples
 
 ```typescript
-import { DockerConfigGenerator } from 'dev-env-bootstrap';
+import { DockerConfigGenerator } from 'deb-tool';
 
 const generator = new DockerConfigGenerator();
 
@@ -277,7 +277,7 @@ import {
   ExpressDockerGenerator,
   ExpressAnalyzer,
   ConfigManager
-} from 'dev-env-bootstrap';
+} from 'deb-tool';
 
 async function setupDocker() {
   const analyzer = new ExpressAnalyzer();
@@ -310,7 +310,7 @@ if (errors.length > 0) {
 
 2. Use type definitions:
 ```typescript
-import type { DockerConfig, MultiStageConfig } from 'dev-env-bootstrap';
+import type { DockerConfig, MultiStageConfig } from 'deb-tool';
 ```
 
 3. Handle service dependencies:

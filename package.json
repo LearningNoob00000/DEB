@@ -44,7 +44,7 @@
     "docker",
     "automation"
   ],
-  "author": "SpongeBUG6996",
+  "author": "SpongeBUG",
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",

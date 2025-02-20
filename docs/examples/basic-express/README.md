@@ -126,7 +126,7 @@ export default router;
 
 1. Install DevEnvBootstrap:
 ```bash
-npm install -g dev-env-bootstrap
+npm install -g deb-tool
 ```
 
 2. Generate Docker configuration:

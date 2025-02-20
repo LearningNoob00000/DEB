@@ -7,13 +7,13 @@ This guide will help you get started with DevEnvBootstrap (DEB), a tool for auto
 Install DevEnvBootstrap globally using npm:
 
 ```bash
-npm install -g dev-env-bootstrap
+npm install -g deb-tool@beta
 ```
 
 Or using yarn:
 
 ```bash
-yarn global add dev-env-bootstrap
+yarn global add deb-tool@beta
 ```
 
 ## Basic Usage
@@ -219,11 +219,21 @@ sudo chown -R $USER:$USER .
 docker compose build --no-cache
 ```
 
+4. Node version compatibility:
+```bash
+# Check Node.js version
+node -v
+
+# Update Node.js version in Dockerfile
+# FROM node:20-alpine
+```
+
 ## Getting Help
 
 - Run `deb --help` for command information
 - Check [documentation](../../README.md)
 - File issues on GitHub
+- Join the community Discord
 
 ## See Also
 

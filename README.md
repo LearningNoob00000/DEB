@@ -1,28 +1,30 @@
 # DevEnvBootstrap (DEB)
 
-[![GitHub license](https://img.shields.io/github/license/LearningNoob00000/DEB)](https://github.com/LearningNoob00000/DEB/blob/master/LICENSE)
-[![npm version](https://img.shields.io/npm/v/dev-env-bootstrap.svg)](https://www.npmjs.com/package/dev-env-bootstrap)
-[![Build Status](https://github.com/LearningNoob00000/DEB/workflows/CI/badge.svg)](https://github.com/LearningNoob00000/DEB/actions)
+[![GitHub license](https://img.shields.io/github/license/SpongeBUG/DEB)](https://github.com/SpongeBUG/DEB/blob/master/LICENSE)
+[![npm version](https://img.shields.io/npm/v/deb-tool/beta.svg)](https://www.npmjs.com/package/deb-tool)
+[![Build Status](https://github.com/SpongeBUG/DEB/workflows/CI/badge.svg?branch=master)](https://github.com/SpongeBUG/DEB/actions)
 [![semantic-release: beta](https://img.shields.io/badge/semantic--release-beta-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+[![Test Coverage](https://img.shields.io/badge/coverage-82%25-brightgreen.svg)](https://github.com/SpongeBUG/DEB/actions)
 
-> 🚀 Automated development environment bootstrapping tool for Node.js projects, with a focus on Express.js applications.
+> 🚀 A comprehensive CLI tool for automatically bootstrapping Docker-based development environments for Node.js/Express projects. Analyzes project structure, detects required services, and generates optimized configurations for both development and production environments.
 
 ## Features
 
-- 🔍 **Project Analysis**: Auto-detect project structure and dependencies
-- 🐳 **Docker Configuration**: Generate Dockerfiles and docker-compose configurations
-- 🛠️ **Service Detection**: Automatically detect and configure required services
-- ⚡ **Quick Setup**: Get your development environment running in minutes
-- 🔄 **Environment Handling**: Smart environment variable management
+- 🔍 **Smart Project Analysis**: Auto-detect project structure, dependencies, and required services
+- 🐳 **Docker Configuration**: Generate optimized Dockerfiles and docker-compose configurations
+- 🛠️ **Service Integration**: Automatically configure MongoDB, Redis, RabbitMQ and other services
+- ⚡ **TypeScript Support**: First-class support for TypeScript projects
+- 🔄 **Environment Management**: Intelligent environment variable detection and configuration
+- 🔒 **Production Ready**: Generate secure configurations for production deployment
 
 ## Installation
 
 ```bash
-# Install globally (beta version)
-npm install -g dev-env-bootstrap@beta
+# Install globally
+npm install -g deb-tool@beta
 
 # Or use it directly with npx
-npx dev-env-bootstrap@beta
+npx deb-tool@beta
 ```
 
 ## Quick Start
@@ -83,9 +85,9 @@ docker compose up -d
 deb express analyze
 
 # Generate Docker configuration with custom settings
-deb express generate \\
-  --dev \\
-  --port 3000 \\
+deb express generate \
+  --dev \
+  --port 3000 \
   --node-version 20-alpine
 ```
 
@@ -103,26 +105,55 @@ Example configuration:
   "docker": {
     "mode": "development",
     "port": 3000,
-    "nodeVersion": "20-alpine"
+    "nodeVersion": "20-alpine",
+    "volumes": ["./src:/app/src"]
   }
 }
 ```
 
-## Features in Beta
+## Documentation
 
-- 🔄 Multi-container orchestration
-- 📊 Project analysis reporting
-- 🔐 Service configuration management
-- 📝 Documentation generation
-- 🧪 Test environment setup
+### API References
+- [CLI API Reference](docs/api/api_cli.md)
+- [Configuration API Reference](docs/api/api_config.md)
+- [Docker API Reference](docs/api/api_docker.md)
+
+### Guides
+- [Getting Started Guide](docs/guides/getting-started.md)
+- [Configuration Guide](docs/guides/configuration.md)
+- [Docker Features Guide](docs/guides/docker.md)
+- [Architecture Guide](docs/guides/architecture.md)
+
+### Examples
+- [Basic Express.js Example](docs/examples/basic-express_README.md)
+- [TypeScript Example](docs/examples/typescript_README.md)
+- [Microservices Example](docs/examples/microservices_README.md)
+
+## Project Status
+
+Current Version: [![npm version](https://img.shields.io/npm/v/deb-tool/beta.svg)](https://www.npmjs.com/package/deb-tool)
+
+| Feature                | Status |
+|------------------------|--------|
+| Project Analysis       | ✅     |
+| Docker Generation      | ✅     |
+| Service Detection      | ✅     |
+| TypeScript Support     | ✅     |
+| Interactive Config     | ✅     |
+| Environment Handling   | ✅     |
+| Test Coverage (82%)    | ✅     |
+| Multi-service Support  | ✅     |
+| Binaries (Win/Mac/Linux) | ✅   |
+| Documentation          | ✅     |
+| Error Handling         | ✅     |
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](docs/docs_contributing.md) for details.
 
 ```bash
 # Clone the repository
-git clone https://github.com/LearningNoob00000/DEB.git
+git clone https://github.com/SpongeBUG/DEB.git
 cd DEB
 
 # Install dependencies
@@ -139,25 +170,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 - 📚 [Documentation](docs/)
-- 🐛 [Issue Tracker](https://github.com/LearningNoob00000/DEB/issues)
-- 💬 [Discussions](https://github.com/LearningNoob00000/DEB/discussions)
-
-## Project Status
-
-Current Version: ![npm version](https://img.shields.io/npm/v/dev-env-bootstrap/beta)
-
-| Feature             | Status |
-|--------------------|--------|
-| Project Analysis   | ✅     |
-| Docker Generation  | ✅     |
-| Service Detection  | ✅     |
-| TypeScript Support | ✅     |
-| Documentation      | 🔄     |
-| Test Coverage      | 🔄     |
+- 🐛 [Issue Tracker](https://github.com/SpongeBUG/DEB/issues)
+- 💬 [Discussions](https://github.com/SpongeBUG/DEB/discussions)
 
 ## Acknowledgments
 
-Special thanks to all our contributors and the following open-source projects:
-- [Commander.js](https://github.com/tj/commander.js)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Docker](https://www.docker.com/)
+Special thanks to all contributors and these amazing open-source projects:
+- [Commander.js](https://github.com/tj/commander.js) - CLI framework
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [Docker](https://www.docker.com/) - Containerization
+- [Jest](https://jestjs.io/) - Testing framework
+- [Semantic Release](https://semantic-release.gitbook.io/) - Release automation
+
+---
+
+Built with ❤️ by the SpongeBUG team

@@ -1,542 +1,350 @@
-# Style Guide
+# Testing Guide
 
-This guide outlines the coding standards and style conventions used in the DevEnvBootstrap project.
+This guide outlines the testing approach, methodologies, and best practices for the DevEnvBootstrap project.
 
-## Code Formatting
+## Testing Philosophy
 
-### General Rules
+DevEnvBootstrap follows a comprehensive testing strategy:
+1. **Unit tests** for individual components
+2. **Integration tests** for component interactions
+3. **End-to-end tests** for complete workflows
+4. **Performance tests** for efficiency and scalability
 
-- Use 2 spaces for indentation
-- Use single quotes for strings
-- Add semicolons at the end of statements
-- Maximum line length of 80 characters
-- Use trailing commas in multiline structures
-
-### ESLint Configuration
-
-```javascript
-// .eslintrc.js
-module.exports = {
-  parser: '@typescript-eslint/parser',
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'prettier'
-  ],
-  rules: {
-    'semi': ['error', 'always'],
-    'quotes': ['error', 'single'],
-    '@typescript-eslint/explicit-function-return-type': 'warn',
-    '@typescript-eslint/no-explicit-any': 'warn'
-  }
-};
-```
-
-### Prettier Configuration
-
-```json
-// .prettierrc
-{
-  "semi": true,
-  "trailingComma": "es5",
-  "singleQuote": true,
-  "printWidth": 80,
-  "tabWidth": 2
-}
-```
-
-## Naming Conventions
-
-### Files and Directories
-
-- Use kebab-case for file names
-- Add type suffixes for specific files
-- Group related files in directories
+## Test Directory Structure
 
 ```
-src/
-├── analyzers/
-│   ├── express-analyzer.ts
-│   └── project-analyzer.ts
-├── types/
-│   └── express.d.ts
-└── utils/
-    └── file-system.ts
+tests/
+├── unit/                 # Unit tests
+│   ├── analyzers/        # Tests for analyzer components
+│   ├── generators/       # Tests for generator components
+│   └── utils/            # Tests for utility functions
+├── integration/          # Integration tests
+│   ├── cli-workflow.test.ts
+│   └── environment-docker-integration.test.ts
+├── benchmarks/           # Performance tests
+│   └── cli-benchmarks.test.ts
+├── helpers/              # Test helpers and utilities
+│   └── test-utils.ts
+└── setup.ts              # Global test setup
 ```
 
-### Classes
+## Unit Testing
 
-- Use PascalCase for class names
-- Add descriptive suffixes
+### Guidelines
+
+1. Test one component at a time
+2. Mock all external dependencies
+3. Focus on behavior, not implementation
+4. Cover edge cases and error scenarios
+
+### Example
 
 ```typescript
-// Good
-class ProjectAnalyzer {}
-class FileSystemUtils {}
-class DockerGenerator {}
+// tests/unit/analyzers/express-analyzer.test.ts
+import { ExpressAnalyzer } from '../../../src/analyzers/express-analyzer';
+import { FileSystemUtils } from '../../../src/utils/file-system';
 
-// Bad
-class analyzer {}
-class Utils {}
-class docker {}
-```
+jest.mock('../../../src/utils/file-system');
 
-### Interfaces and Types
-
-- Use PascalCase
-- Prefix interfaces with 'I' (optional)
-- Use descriptive names
-
-```typescript
-// Interfaces
-interface IProjectConfig {
-  name: string;
-  version: string;
-}
-
-// Types
-type AnalysisResult = {
-  type: string;
-  dependencies: string[];
-};
-
-// Enums
-enum LogLevel {
-  DEBUG,
-  INFO,
-  WARN,
-  ERROR
-}
-```
-
-### Variables and Functions
-
-- Use camelCase
-- Use descriptive names
-- Avoid abbreviations
-
-```typescript
-// Variables
-const userConfig = loadConfig();
-const isProduction = process.env.NODE_ENV === 'production';
-
-// Functions
-async function analyzeProject(): Promise<Analysis> {}
-function validateConfig(config: Config): boolean {}
-```
-
-## TypeScript Guidelines
-
-### Type Annotations
-
-```typescript
-// Use explicit return types for functions
-function getData(): Promise<Data> {}
-
-// Use type annotations for complex objects
-const config: Config = {
-  port: 3000,
-  env: 'development'
-};
-
-// Use generics appropriately
-class Cache<T> {
-  get(key: string): T | undefined {}
-}
-```
-
-### Type Definitions
-
-```typescript
-// Use interfaces for object definitions
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
-// Use type aliases for unions and complex types
-type Status = 'pending' | 'success' | 'error';
-type Handler = (data: any) => Promise<void>;
-
-// Use enums for fixed sets of values
-enum Environment {
-  Development = 'development',
-  Production = 'production'
-}
-```
-
-### Generics
-
-```typescript
-// Use descriptive generic names
-interface Repository<TEntity> {
-  find(id: string): Promise<TEntity>;
-  save(entity: TEntity): Promise<void>;
-}
-
-// Use constraints when necessary
-function processItem<T extends BaseItem>(item: T): void {}
-```
-
-## Code Organization
-
-### File Structure
-
-```typescript
-// imports
-import { Dependencies } from './dependencies';
-
-// interfaces/types
-interface Config {}
-
-// constants
-const DEFAULT_CONFIG = {};
-
-// class/function implementations
-export class Service {
-  constructor() {}
-
-  // public methods first
-  public async process(): Promise<void> {}
-
-  // private methods last
-  private validate(): boolean {}
-}
-```
-
-### Module Exports
-
-```typescript
-// Single responsibility exports
-export class ProjectAnalyzer {}
-export interface ProjectConfig {}
-
-// Barrel exports in index.ts
-export * from './project-analyzer';
-export * from './config-types';
-```
-
-## Documentation
-
-### JSDoc Comments
-
-```typescript
-/**
- * Analyzes project structure and dependencies
- * @param path - Project root path
- * @param options - Analysis options
- * @returns Analysis results
- * @throws {AnalysisError} When analysis fails
- */
-async function analyzeProject(
-  path: string,
-  options?: AnalysisOptions
-): Promise<Analysis> {}
-```
-
-### Code Comments
-
-```typescript
-// Use comments to explain complex logic
-function complexCalculation(): number {
-  // First, normalize the input
-  const normalized = normalize(input);
-
-  // Then apply the transformation
-  const transformed = transform(normalized);
-
-  return transformed;
-}
-```
-
-## Testing Style
-
-### Test Structure
-
-```typescript
-describe('ServiceName', () => {
-  // Setup
-  let service: Service;
+describe('ExpressAnalyzer', () => {
+  let analyzer: ExpressAnalyzer;
+  let mockFileSystem: jest.Mocked<FileSystemUtils>;
 
   beforeEach(() => {
-    service = new Service();
+    mockFileSystem = new FileSystemUtils() as jest.Mocked<FileSystemUtils>;
+    (FileSystemUtils as jest.Mock).mockImplementation(() => mockFileSystem);
+    analyzer = new ExpressAnalyzer();
   });
 
-  // Test cases
-  describe('methodName', () => {
-    it('should handle success case', async () => {
-      // Arrange
-      const input = {};
+  describe('analyze', () => {
+    it('should detect Express.js project with basic configuration', async () => {
+      // Setup mocks
+      const mockPackageJson = { dependencies: { 'express': '^4.17.1' } };
+      mockFileSystem.fileExists.mockResolvedValue(true);
+      mockFileSystem.readFile.mockResolvedValue(JSON.stringify(mockPackageJson));
 
-      // Act
-      const result = await service.method(input);
+      // Execute
+      const result = await analyzer.analyze('/fake/path');
 
       // Assert
-      expect(result).toBe(expected);
+      expect(result.hasExpress).toBe(true);
+      expect(result.version).toBe('^4.17.1');
     });
   });
 });
 ```
 
-### Test Naming
+## Integration Testing
+
+### Guidelines
+
+1. Test how components work together
+2. Minimize mocking of internal components
+3. Focus on component interfaces
+4. Test realistic scenarios
+
+### Example
 
 ```typescript
-// Use descriptive test names
-it('should return user when valid ID is provided', async () => {});
-it('should throw error when user is not found', async () => {});
+// tests/integration/environment-docker-integration.test.ts
+import { EnvironmentAnalyzer } from '../../src/analyzers/environment-analyzer';
+import { ExpressDockerGenerator } from '../../src/generators/express-docker-generator';
+
+describe('Environment Analyzer and Docker Generator Integration', () => {
+  let analyzer: EnvironmentAnalyzer;
+  let generator: ExpressDockerGenerator;
+
+  beforeEach(() => {
+    analyzer = new EnvironmentAnalyzer();
+    generator = new ExpressDockerGenerator();
+  });
+
+  it('should configure MongoDB service correctly in docker-compose', async () => {
+    // Setup
+    const mockEnvContent = `MONGODB_URI=mongodb://localhost:27017/app`;
+    mockFileSystem.readFile.mockResolvedValue(mockEnvContent);
+
+    // Execute
+    const envConfig = await analyzer.analyze('/fake/path');
+    const dockerCompose = generator.generateCompose(baseProjectInfo, {
+      environment: envConfig
+    });
+
+    // Assert
+    expect(dockerCompose).toContain('mongodb:');
+    expect(dockerCompose).toContain('image: mongo:latest');
+  });
+});
 ```
 
-## Error Handling
+## CLI Testing
 
-### Error Classes
+### Guidelines
+
+1. Test command parsing
+2. Test user interaction
+3. Test error handling
+4. Mock actual file system operations
+
+### Example
 
 ```typescript
-// Custom error classes
-export class ValidationError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'ValidationError';
-  }
-}
+// tests/integration/cli-integration.test.ts
+import { createCLI } from '../../src/cli';
+import { Command } from 'commander';
 
-// Error usage
-// Custom error classes
-export class ValidationError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'ValidationError';
-  }
-}
+describe('CLI Integration Tests', () => {
+  let cli: Command;
+  let mockConsoleLog: jest.SpyInstance;
 
-// Error usage
-throw new ValidationError('Invalid configuration provided');
+  beforeEach(() => {
+    cli = createCLI();
+    mockConsoleLog = jest.spyOn(console, 'log').mockImplementation();
+  });
 
-// Error catching
-try {
-  await validateConfig(config);
-} catch (error) {
-  if (error instanceof ValidationError) {
-    // Handle validation errors
-  }
-  throw error;
-}
+  afterEach(() => {
+    mockConsoleLog.mockRestore();
+  });
+
+  it('should analyze project and output JSON when requested', async () => {
+    await cli.parseAsync(['node', 'test', 'analyze', '.', '--json']);
+    
+    const jsonOutput = JSON.parse(mockConsoleLog.mock.calls[0][0]);
+    expect(jsonOutput).toHaveProperty('projectType');
+  });
+});
 ```
 
-## Async/Await Style
+## Performance Testing
 
-### Promise Handling
+### Guidelines
+
+1. Measure execution time
+2. Monitor memory usage
+3. Test with large datasets
+4. Run benchmarks consistently
+
+### Example
 
 ```typescript
-// Prefer async/await over .then()
-// Good
-async function getData(): Promise<Data> {
-  const result = await fetchData();
-  return processData(result);
-}
+// tests/benchmarks/cli-benchmarks.test.ts
+import { Benchmark } from '../../src/utils/benchmark';
+import { ProjectScanner } from '../../src/analyzers/project-scanner';
 
-// Avoid
-function getData(): Promise<Data> {
-  return fetchData()
-    .then(result => processData(result));
-}
+describe('CLI Performance Benchmarks', () => {
+  it('should benchmark project scanning performance', async () => {
+    const scanner = new ProjectScanner();
+    
+    const result = await Benchmark.run(
+      async () => {
+        await scanner.scan('/fake/path');
+      },
+      {
+        name: 'Project Scanner',
+        iterations: 100,
+        warmupIterations: 10
+      }
+    );
+
+    expect(result.operationsPerSecond).toBeGreaterThan(50);
+  });
+});
 ```
 
-### Error Handling
+## Mocking
+
+### Guidelines
+
+1. Use Jest mocks for external dependencies
+2. Create mock factories for complex objects
+3. Only mock what's necessary
+4. Keep mocks simple
+
+### Example
 
 ```typescript
-// Use try/catch blocks
-async function processData(): Promise<void> {
-  try {
-    const data = await fetchData();
-    await saveData(data);
-  } catch (error) {
-    logger.error('Data processing failed:', error);
-    throw error;
-  }
-}
+// Mocking file system
+jest.mock('../../src/utils/file-system');
+const mockFileSystem = {
+  fileExists: jest.fn().mockResolvedValue(true),
+  readFile: jest.fn().mockResolvedValue('{"name":"test"}'),
+  writeFile: jest.fn().mockResolvedValue(undefined)
+};
+(FileSystemUtils as jest.Mock).mockImplementation(() => mockFileSystem);
+
+// Mocking CLI input/output
+const mockConsoleLog = jest.spyOn(console, 'log').mockImplementation();
+const mockExit = jest.spyOn(process, 'exit').mockImplementation((() => {
+  throw new Error('Process.exit called');
+}) as never);
 ```
 
-## CLI Output Style
+## Test Data
 
-### Console Messages
+### Guidelines
 
-```typescript
-// Use consistent formatting for CLI output
-class CliFormatter {
-  success(message: string): void {
-    console.log(`✅ ${message}`);
-  }
+1. Use factory functions for test data
+2. Keep test data minimal and focused
+3. Clearly separate test data from assertions
+4. Use descriptive names for test data
 
-  error(message: string): void {
-    console.error(`❌ ${message}`);
-  }
-
-  info(message: string): void {
-    console.log(`ℹ️  ${message}`);
-  }
-
-  warning(message: string): void {
-    console.warn(`⚠️  ${message}`);
-  }
-}
-```
-
-### Progress Indicators
+### Example
 
 ```typescript
-// Use consistent progress indicators
-class ProgressIndicator {
-  start(message: string): void {
-    console.log(`⏳ ${message}`);
-  }
-
-  complete(message: string): void {
-    console.log(`✅ ${message}`);
-  }
-}
-```
-
-## Configuration Style
-
-### Configuration Objects
-
-```typescript
-// Use interface for configuration
-interface ProjectConfig {
-  name: string;
-  version: string;
-  environment: 'development' | 'production';
-  server: {
-    port: number;
-    host: string;
+// Test data factory
+function createMockProjectInfo(overrides: Partial<ExpressProjectInfo> = {}): ExpressProjectInfo {
+  return {
+    hasExpress: true,
+    version: '4.17.1',
+    mainFile: 'index.js',
+    port: 3000,
+    middleware: [],
+    hasTypeScript: false,
+    ...overrides
   };
 }
 
-// Use default values
-const DEFAULT_CONFIG: ProjectConfig = {
-  name: 'project',
-  version: '1.0.0',
-  environment: 'development',
-  server: {
-    port: 3000,
-    host: 'localhost'
-  }
-};
+// Using test data
+const projectInfo = createMockProjectInfo({ hasTypeScript: true });
 ```
 
-## File System Operations
+## Error Testing
 
-### Path Handling
+### Guidelines
+
+1. Test expected error scenarios
+2. Verify error messages and types
+3. Test error recovery paths
+4. Test boundary conditions
+
+### Example
 
 ```typescript
-// Use path.join for path concatenation
-import { join } from 'path';
+it('should handle file not found error', async () => {
+  const error = new Error('File not found');
+  (error as NodeJS.ErrnoException).code = 'ENOENT';
+  mockFileSystem.readFile.mockRejectedValue(error);
 
-const configPath = join(process.cwd(), 'config.json');
-
-// Normalize paths
-import { normalize } from 'path';
-const normalizedPath = normalize(rawPath);
+  await expect(fileSystem.readFile('nonexistent.txt'))
+    .rejects
+    .toThrow(FileSystemError);
+});
 ```
 
-## Dependency Injection
+## Test Coverage
 
-### Constructor Injection
-
-```typescript
-class Service {
-  constructor(
-    private readonly database: Database,
-    private readonly logger: Logger
-  ) {}
-}
-
-// Usage
-const service = new Service(
-  new Database(),
-  new Logger()
-);
-```
-
-## Constants and Enums
-
-### Constant Naming
-
-```typescript
-// Use UPPER_SNAKE_CASE for constants
-const DEFAULT_TIMEOUT = 3000;
-const MAX_RETRIES = 3;
-
-// Group related constants
-const HTTP_CODES = {
-  OK: 200,
-  CREATED: 201,
-  BAD_REQUEST: 400,
-  NOT_FOUND: 404
-} as const;
-```
-
-### Enum Usage
-
-```typescript
-// Use enums for related constants
-enum LogLevel {
-  DEBUG = 'debug',
-  INFO = 'info',
-  WARN = 'warn',
-  ERROR = 'error'
-}
-
-// Use const enums for better performance
-const enum Direction {
-  Up,
-  Down,
-  Left,
-  Right
-}
-```
-
-## Git Commit Style
-
-### Commit Messages
+DevEnvBootstrap aims for >80% test coverage:
 
 ```
-feat(scope): add new feature
-fix(scope): fix specific issue
-docs(scope): update documentation
-style(scope): update code style
-refactor(scope): refactor code
-test(scope): add or update tests
-chore(scope): update build tasks
+-----------------------|---------|----------|---------|---------|-------------------
+File                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------------|---------|----------|---------|---------|-------------------
+All files              |   82.13 |    76.31 |   88.88 |   81.99 |                   
+ analyzers             |   99.35 |    89.83 |     100 |   99.34 |                   
+ cli                   |     100 |      100 |     100 |     100 |                   
+ cli/commands          |   62.04 |    45.76 |   76.92 |   61.58 |                   
+ cli/utils             |   90.24 |       80 |   78.57 |    92.3 |                   
+ generators            |   93.15 |    86.11 |    92.3 |   93.05 |                   
+ utils                 |    76.8 |    79.59 |   89.47 |   76.42 |                   
+-----------------------|---------|----------|---------|---------|-------------------
 ```
 
-## Code Reviews
+### Coverage Commands
 
-### Review Checklist
+```bash
+# Run all tests with coverage
+npm run test:coverage
 
-1. Code Style
-   - Follows formatting rules
-   - Uses consistent naming
-   - Proper documentation
+# Generate coverage report
+npm run test:coverage:report
 
-2. TypeScript
-   - Proper type usage
-   - No unnecessary any
-   - Clear interfaces
+# View coverage report
+open coverage/lcov-report/index.html
+```
 
-3. Testing
-   - Adequate test coverage
-   - Clear test cases
-   - Proper mocking
+## Continuous Integration
 
-4. Error Handling
-   - Proper error classes
-   - Consistent error messages
-   - Error recovery
+Tests are run automatically on CI for:
+- Pull requests
+- Merges to master
+- Release builds
+
+### CI Configuration
+
+```yaml
+# .github/workflows/ci.yml
+test:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+    - name: Install dependencies
+      run: npm ci
+    - name: Run tests
+      run: npm run test:coverage
+```
+
+## Best Practices
+
+1. **Isolation**: Tests should be independent; one test should not affect another
+2. **Idempotency**: Tests should produce the same results regardless of how many times they run
+3. **Speed**: Tests should run quickly to support the development workflow
+4. **Readability**: Tests should be easy to understand and maintain
+5. **Determinism**: Tests should not have timing dependencies or race conditions
+
+## Testing Tools
+
+- **Jest**: Main testing framework
+- **ts-jest**: TypeScript support
+- **supertest**: HTTP testing
+- **jest-junit**: CI reporting
+- **Benchmark**: Performance testing
 
 ## See Also
 
-- [Architecture Guide](./architecture.md)
 - [Development Guide](./development.md)
-- [Testing Guide](./testing.md)
+- [Style Guide](./style.md)
+- [Architecture Guide](./architecture.md)

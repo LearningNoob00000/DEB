@@ -42,7 +42,7 @@ class ConfigManager {
 
 #### Basic Configuration Loading
 ```typescript
-import { ConfigManager } from 'dev-env-bootstrap';
+import { ConfigManager } from 'deb-tool';
 
 const configManager = new ConfigManager();
 
@@ -86,7 +86,7 @@ class ConfigValidators {
 ### Usage Examples
 
 ```typescript
-import { ConfigValidators } from 'dev-env-bootstrap';
+import { ConfigValidators } from 'deb-tool';
 
 // Validate port
 const isValidPort = ConfigValidators.validatePort(3000);
@@ -192,7 +192,7 @@ try {
 
 ### With Express.js Analysis
 ```typescript
-import { ConfigManager, ExpressAnalyzer } from 'dev-env-bootstrap';
+import { ConfigManager, ExpressAnalyzer } from 'deb-tool';
 
 async function analyzeWithConfig() {
   const configManager = new ConfigManager();
@@ -207,7 +207,7 @@ async function analyzeWithConfig() {
 
 ### With Docker Generation
 ```typescript
-import { ConfigManager, ExpressDockerGenerator } from 'dev-env-bootstrap';
+import { ConfigManager, ExpressDockerGenerator } from 'deb-tool';
 
 async function generateDocker() {
   const configManager = new ConfigManager();
@@ -232,7 +232,7 @@ if (errors.length > 0) {
 
 2. Use type definitions for better IDE support:
 ```typescript
-import type { CliConfig, DockerConfig } from 'dev-env-bootstrap';
+import type { CliConfig, DockerConfig } from 'deb-tool';
 ```
 
 3. Handle configuration errors appropriately:
