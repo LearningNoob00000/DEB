@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.11](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2025-02-20)
+
+
+### Bug Fixes
+
+* remove debug logging and finalize CLI commands ([4c7628f](https://github.com/SpongeBUG/DEB/commit/4c7628f3aab494b98eab85718da2e9610b75c0d7))
+
 # [1.0.0-beta.10](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2025-02-16)
 
 
