@@ -1,7 +1,7 @@
 {
-  "name": "dev-env-bootstrap",
-  "version": "1.0.0-beta.10",
-  "description": "Automated development environment bootstrapping tool",
+  "name": "deb-tool",
+  "version": "1.0.0-beta.13",
+  "description": "A comprehensive CLI tool for automatically bootstrapping Docker-based development environments for Node.js/Express projects. Analyzes project structure, detects required services, and generates optimized configurations for both development and production environments.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "preferGlobal": true,

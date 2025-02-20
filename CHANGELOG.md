@@ -2,6 +2,27 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.13](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2025-02-20)
+
+
+### Features
+
+* rename package for npm publishing ([b9818e7](https://github.com/SpongeBUG/DEB/commit/b9818e7aafddc8da8f0551bed5966ca6caad1a1f))
+
+# [1.0.0-beta.12](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-02-20)
+
+
+### Features
+
+* initial beta release for new npm account ([e6a513c](https://github.com/SpongeBUG/DEB/commit/e6a513cf3b6a562e0babf834d24162fe8f9601ae))
+
+# [1.0.0-beta.11](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2025-02-20)
+
+
+### Bug Fixes
+
+* remove debug logging and finalize CLI commands ([4c7628f](https://github.com/SpongeBUG/DEB/commit/4c7628f3aab494b98eab85718da2e9610b75c0d7))
+
 # [1.0.0-beta.10](https://github.com/LearningNoob00000/DEB/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2025-02-16)
 
 
