@@ -17,17 +17,23 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": "warn"
     },
     root: true,
+    parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'module'
+    },
     overrides: [
         {
             files: ["src/**/*.ts"],
             parserOptions: {
-                project: ["./tsconfig.json"]
+                tsconfigRootDir: __dirname,
+                project: "./tsconfig.json"
             }
         },
         {
             files: ["tests/**/*.ts"],
             parserOptions: {
-                project: ["./tsconfig.json", "./tests/tsconfig.json"]
+                tsconfigRootDir: __dirname,
+                project: "./tests/tsconfig.json"
             }
         }
     ]
