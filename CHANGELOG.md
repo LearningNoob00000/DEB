@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+## [1.0.4](https://github.com/SpongeBUG/DEB/compare/v1.0.3...v1.0.4) (2025-02-20)
+
+
+### Bug Fixes
+
+* linting errors and typescript config ([fc66815](https://github.com/SpongeBUG/DEB/commit/fc668155c7e69520fa886ada3c5efec81f917250))
+
 ## [1.0.3](https://github.com/SpongeBUG/DEB/compare/v1.0.2...v1.0.3) (2025-02-20)
 
 
