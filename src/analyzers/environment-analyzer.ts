@@ -32,31 +32,31 @@ export class EnvironmentAnalyzer {
       {
         name: 'MongoDB',
         pattern: /MONGODB?_(?:URI|URL|HOST|PRIMARY|SECONDARY|REPLICA)/i,
-        urlExtractor: (value: string): string => 
+        urlExtractor: (value: string): string =>
           value.includes('://') ? value : `mongodb://${value}`,
       },
       {
         name: 'Database',
         pattern: /(POSTGRES(?:QL)?|DATABASE)_(?:URI|URL|HOST|PRIMARY|SECONDARY)/i,
-        urlExtractor: (value: string): string => 
+        urlExtractor: (value: string): string =>
           value.includes('://') ? value : `postgresql://${value}`,
       },
       {
         name: 'Redis',
         pattern: /REDIS_(?:URI|URL|HOST|CACHE|QUEUE)/i,
-        urlExtractor: (value: string): string => 
+        urlExtractor: (value: string): string =>
           value.includes('://') ? value : `redis://${value}`,
       },
       {
         name: 'RabbitMQ',
         pattern: /RABBITMQ_(?:URI|URL|HOST)/i,
-        urlExtractor: (value: string): string => 
+        urlExtractor: (value: string): string =>
           value.includes('://') ? value : `amqp://${value}`,
       },
       {
         name: 'Elasticsearch',
         pattern: /ELASTIC(?:SEARCH)?_(?:URI|URL|HOST)/i,
-        urlExtractor: (value: string): string => 
+        urlExtractor: (value: string): string =>
           value.includes('://') ? value : `http://${value}`,
       },
       {
@@ -147,7 +147,9 @@ export class EnvironmentAnalyzer {
     return variables;
   }
 
-  private detectServices(variables: Record<string, string>): EnvironmentConfig['services'] {
+  private detectServices(
+    variables: Record<string, string>
+  ): EnvironmentConfig['services'] {
     const services: EnvironmentConfig['services'] = [];
     const serviceGroups = new Map<string, Set<string>>();
 
