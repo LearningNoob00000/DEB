@@ -145,7 +145,7 @@ export class FileSystemUtils {
             await walk(fullPath);
           } else if (patterns.some(pattern => {
             if (pattern.includes('*')) {
-              const regex = new RegExp(pattern.replace('*', '.*'));
+              const regex = new RegExp(pattern.replace(/\*/g, '.*'));
               return regex.test(entry.name);
             }
             return entry.name === pattern;
