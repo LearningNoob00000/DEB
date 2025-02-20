@@ -19,9 +19,15 @@ module.exports = {
     root: true,
     overrides: [
         {
-            files: ["*.ts"],
+            files: ["src/**/*.ts"],
             parserOptions: {
                 project: ["./tsconfig.json"]
+            }
+        },
+        {
+            files: ["tests/**/*.ts"],
+            parserOptions: {
+                project: ["./tsconfig.json", "./tests/tsconfig.json"]
             }
         }
     ]
