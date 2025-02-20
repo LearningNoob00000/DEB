@@ -2,6 +2,14 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+## [1.0.1](https://github.com/SpongeBUG/DEB/compare/v1.0.0...v1.0.1) (2025-02-20)
+
+
+### Bug Fixes
+
+* workflow ([5258a3e](https://github.com/SpongeBUG/DEB/commit/5258a3ee748c22ca54403b5192e50b2d547dc496))
+* workflow version ([5e368b8](https://github.com/SpongeBUG/DEB/commit/5e368b83d6b3a1ca68e7715020d986a9b158d9a1))
+
 # 1.0.0 (2025-02-20)
 
 
