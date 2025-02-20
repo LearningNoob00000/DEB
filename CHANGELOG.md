@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+## [1.0.2](https://github.com/SpongeBUG/DEB/compare/v1.0.1...v1.0.2) (2025-02-20)
+
+
+### Bug Fixes
+
+* improve versioning ([152ff56](https://github.com/SpongeBUG/DEB/commit/152ff5656d735eb1fe84ad7612876b288e94f1bb))
+
 ## [1.0.1](https://github.com/SpongeBUG/DEB/compare/v1.0.0...v1.0.1) (2025-02-20)
 
 
