@@ -14,7 +14,27 @@ module.exports = [
     ]
   },
   {
-    files: ['**/*.ts'],
+    files: ['src/**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'module',
+        project: './tsconfig.json'
+      }
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+      'prettier': prettierPlugin
+    },
+    rules: {
+      'prettier/prettier': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn'
+    }
+  },
+  {
+    files: ['tests/**/*.ts'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
