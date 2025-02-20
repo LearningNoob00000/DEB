@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.15](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2025-02-20)
+
+
+### Bug Fixes
+
+* npm readme.md ([5fc09a4](https://github.com/SpongeBUG/DEB/commit/5fc09a4f4feeef64ef12d25fe6d7d62d3ca89084))
+
 # [1.0.0-beta.14](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2025-02-20)
 
 
