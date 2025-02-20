@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+# [1.0.0-beta.14](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2025-02-20)
+
+
+### Features
+
+* complete test suite and documentation ([a7dabfa](https://github.com/SpongeBUG/DEB/commit/a7dabfa69fb8e66d63b7e6cc84f683d3fcad1101)), closes [#42](https://github.com/SpongeBUG/DEB/issues/42)
+
 # [1.0.0-beta.13](https://github.com/SpongeBUG/DEB/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2025-02-20)
 
 
