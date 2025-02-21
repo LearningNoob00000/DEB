@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+## [1.0.6](https://github.com/SpongeBUG/DEB/compare/v1.0.5...v1.0.6) (2025-02-21)
+
+
+### Bug Fixes
+
+* eslint error configuration ([bd94379](https://github.com/SpongeBUG/DEB/commit/bd94379ccbab99ce3762f14cd1289239870ca8fb))
+
 ## [1.0.5](https://github.com/SpongeBUG/DEB/compare/v1.0.4...v1.0.5) (2025-02-20)
 
 
