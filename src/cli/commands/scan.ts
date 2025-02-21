@@ -19,15 +19,17 @@ export const createScanCommand = (): Command => {
         if (result.projectType === 'express') {
           console.log('\n✅ Express.js project detected');
           console.log('\nDependencies:');
-          Object.entries(result.dependencies.dependencies).forEach(([name, version]) => {
-            console.log(`- ${name}: ${version}`);
-          });
+          Object.entries(result.dependencies.dependencies).forEach(
+            ([name, version]) => {
+              console.log(`- ${name}: ${version}`);
+            }
+          );
 
           if (result.environment?.services.length) {
             console.log('\nRequired Services:');
             result.environment.services
-              .filter(service => service.required)
-              .forEach(service => {
+              .filter((service) => service.required)
+              .forEach((service) => {
                 console.log(`- ${service.name}`);
               });
           }

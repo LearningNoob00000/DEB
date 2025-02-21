@@ -23,19 +23,27 @@ export const createAnalyzeCommand = (): Command => {
           console.log('\nProject Analysis:');
           console.log('-----------------');
           console.log(`Project Type: ${result.projectType}`);
-          console.log(`Dependencies: ${Object.keys(result.dependencies.dependencies).length}`);
-          console.log(`Dev Dependencies: ${Object.keys(result.dependencies.devDependencies).length}`);
+          console.log(
+            `Dependencies: ${Object.keys(result.dependencies.dependencies).length}`
+          );
+          console.log(
+            `Dev Dependencies: ${Object.keys(result.dependencies.devDependencies).length}`
+          );
           console.log(`Project Root: ${result.projectRoot}`);
 
           if (result.environment) {
             console.log('\nEnvironment Configuration:');
             console.log('------------------------');
-            console.log(`Environment File: ${result.environment.hasEnvFile ? '✅ Found' : '❌ Not found'}`);
+            console.log(
+              `Environment File: ${result.environment.hasEnvFile ? '✅ Found' : '❌ Not found'}`
+            );
 
             if (result.environment.services.length > 0) {
               console.log('\nDetected Services:');
-              result.environment.services.forEach(service => {
-                console.log(`- ${service.name} (${service.required ? 'Required' : 'Optional'})`);
+              result.environment.services.forEach((service) => {
+                console.log(
+                  `- ${service.name} (${service.required ? 'Required' : 'Optional'})`
+                );
                 if (service.url) {
                   console.log(`  URL: ${service.url}`);
                 }
@@ -44,7 +52,9 @@ export const createAnalyzeCommand = (): Command => {
           }
         }
       } catch (error) {
-        progress.fail(error instanceof Error ? error.message : 'Analysis failed');
+        progress.fail(
+          error instanceof Error ? error.message : 'Analysis failed'
+        );
         process.exit(1);
       }
     });

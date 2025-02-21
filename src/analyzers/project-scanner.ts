@@ -3,7 +3,10 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { FileSystemUtils } from '../utils/file-system';
 import { EnvironmentAnalyzer, EnvironmentConfig } from './environment-analyzer';
-
+interface PackageJson {
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+}
 export interface ProjectInfo {
   projectType: 'express' | 'unknown';
   hasPackageJson: boolean;
@@ -33,7 +36,7 @@ export class ProjectScanner {
     let envInfo: EnvironmentConfig = {
       variables: {},
       hasEnvFile: false,
-      services: []
+      services: [],
     };
 
     try {
@@ -49,7 +52,7 @@ export class ProjectScanner {
         hasPackageJson: false,
         dependencies: { dependencies: {}, devDependencies: {} },
         projectRoot: absolutePath,
-        environment: envInfo
+        environment: envInfo,
       };
     }
 
@@ -64,19 +67,19 @@ export class ProjectScanner {
         devDependencies: packageJson.devDependencies || {},
       },
       projectRoot: absolutePath,
-      environment: envInfo
+      environment: envInfo,
     };
   }
 
-private async readPackageJson(projectPath: string): Promise<any> {
+  private async readPackageJson(projectPath: string): Promise<PackageJson> {
   const packageJsonPath = path.join(projectPath, 'package.json');
   try {
     const content = await this.fileSystem.readFile(packageJsonPath);
     try {
-      return JSON.parse(content);
+      return JSON.parse(content) as PackageJson;
     } catch (error) {
       console.error('Failed to parse package.json');
-      return {}; // Return empty object instead of throwing
+      return {}; 
     }
   } catch (error) {
     console.error('Failed to read package.json:', error);

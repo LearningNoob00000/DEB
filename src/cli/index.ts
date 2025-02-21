@@ -12,12 +12,12 @@ export const createCLI = (): Command => {
     .version('1.0.0-beta.9');
 
   program.addCommand(createScanCommand());
-  
+
   program.addCommand(createAnalyzeCommand());
-  
+
   const expressCommands = createExpressCommands();
 
-  expressCommands.forEach(cmd => program.addCommand(cmd));
+  expressCommands.forEach((cmd) => program.addCommand(cmd));
 
   return program;
 };

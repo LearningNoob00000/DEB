@@ -8,6 +8,6 @@ export const ErrorMessages = {
   VALIDATION: {
     PORT: 'Invalid port number. Must be between 1 and 65535',
     VOLUME: 'Invalid volume mount syntax. Use format: source:target',
-    MODE: 'Invalid mode. Must be either "development" or "production"'
-  }
+    MODE: 'Invalid mode. Must be either "development" or "production"',
+  },
 } as const;

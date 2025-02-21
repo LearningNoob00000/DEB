@@ -13,7 +13,7 @@ const DEFAULT_CONFIG: CliConfig = {
   outputFormat: 'simple',
   timeout: 30000,
   batchSize: 10,
-  excludePatterns: ['node_modules', '.git']
+  excludePatterns: ['node_modules', '.git'],
 };
 
 export class ConfigManager {

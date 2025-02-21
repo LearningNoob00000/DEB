@@ -3,7 +3,10 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 export class FileSystemError extends Error {
-  constructor(message: string, public readonly path: string) {
+  constructor(
+    message: string,
+    public readonly path: string
+  ) {
     super(`FileSystem Error: ${message} (path: ${path})`);
     this.name = 'FileSystemError';
   }
@@ -20,7 +23,10 @@ export class FileSystemUtils {
    * @param filePath - Path to the file
    * @param options - Optional file reading options
    */
-  public async readFile(filePath: string, options: FileSystemOptions = {}): Promise<string> {
+  public async readFile(
+    filePath: string,
+    options: FileSystemOptions = {}
+  ): Promise<string> {
     try {
       const encoding = options.encoding || 'utf8';
       return await fs.readFile(filePath, { encoding });
@@ -43,7 +49,11 @@ export class FileSystemUtils {
    * @param content - Content to write
    * @param options - Optional file writing options
    */
-  public async writeFile(filePath: string, content: string, options: FileSystemOptions = {}): Promise<void> {
+  public async writeFile(
+    filePath: string,
+    content: string,
+    options: FileSystemOptions = {}
+  ): Promise<void> {
     try {
       const encoding = options.encoding || 'utf8';
       // Ensure the directory exists before writing
@@ -94,14 +104,17 @@ export class FileSystemUtils {
    * @param dirPath - Path to the directory
    * @param options - Optional listing options
    */
-  public async listFiles(dirPath: string, options: FileSystemOptions = {}): Promise<string[]> {
+  public async listFiles(
+    dirPath: string,
+    options: FileSystemOptions = {}
+  ): Promise<string[]> {
     try {
       const files = await fs.readdir(dirPath, { withFileTypes: true });
       const ignore = new Set(options.ignore || []);
 
       return files
-        .filter(file => file.isFile() && !ignore.has(file.name))
-        .map(file => path.join(dirPath, file.name));
+        .filter((file) => file.isFile() && !ignore.has(file.name))
+        .map((file) => path.join(dirPath, file.name));
     } catch (error) {
       if (error instanceof Error) {
         if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
@@ -143,13 +156,15 @@ export class FileSystemUtils {
 
           if (entry.isDirectory()) {
             await walk(fullPath);
-          } else if (patterns.some(pattern => {
-            if (pattern.includes('*')) {
-              const regex = new RegExp(pattern.replace('*', '.*'));
-              return regex.test(entry.name);
-            }
-            return entry.name === pattern;
-          })) {
+          } else if (
+            patterns.some((pattern) => {
+              if (pattern.includes('*')) {
+                const regex = new RegExp(pattern.replace('*', '.*'));
+                return regex.test(entry.name);
+              }
+              return entry.name === pattern;
+            })
+          ) {
             results.push(fullPath);
           }
         }
@@ -173,7 +188,10 @@ export class FileSystemUtils {
    * @param path - Path to remove
    * @param options - Optional removal options
    */
-  public async remove(path: string, options: FileSystemOptions = {}): Promise<void> {
+  public async remove(
+    path: string,
+    options: FileSystemOptions = {}
+  ): Promise<void> {
     try {
       const stats = await fs.stat(path);
       if (stats.isDirectory()) {
@@ -200,7 +218,11 @@ export class FileSystemUtils {
    * @param dest - Destination path
    * @param options - Optional copy options
    */
-  public async copy(src: string, dest: string, options: FileSystemOptions = {}): Promise<void> {
+  public async copy(
+    src: string,
+    dest: string,
+    options: FileSystemOptions = {}
+  ): Promise<void> {
     try {
       const stats = await fs.stat(src);
 
@@ -208,13 +230,11 @@ export class FileSystemUtils {
         await this.ensureDir(dest);
         const files = await fs.readdir(src);
 
-        await Promise.all(files.map(file =>
-          this.copy(
-            path.join(src, file),
-            path.join(dest, file),
-            options
+        await Promise.all(
+          files.map((file) =>
+            this.copy(path.join(src, file), path.join(dest, file), options)
           )
-        ));
+        );
       } else {
         await this.ensureDir(path.dirname(dest));
         await fs.copyFile(src, dest);

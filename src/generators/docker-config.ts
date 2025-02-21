@@ -52,16 +52,13 @@ CMD ["npm", "start"]
       app: {
         build: {
           context: '.',
-          target: config.mode
+          target: config.mode,
         },
         ports: [`${config.port}:${config.port}`],
-        environment: [
-          `NODE_ENV=${config.mode}`,
-          `PORT=${config.port}`
-        ],
+        environment: [`NODE_ENV=${config.mode}`, `PORT=${config.port}`],
         volumes: config.volumes,
-        networks: config.networks
-      }
+        networks: config.networks,
+      },
     };
 
     return `version: '3.8'\n\nservices:\n${JSON.stringify(services, null, 2)}`;

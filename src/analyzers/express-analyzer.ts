@@ -31,12 +31,13 @@ export class ExpressAnalyzer {
       mainFile: null,
       port: null,
       middleware: [],
-      hasTypeScript: false
+      hasTypeScript: false,
     };
 
     try {
       // Check if package.json exists
-      const packageJsonExists = await this.fileSystem.fileExists(packageJsonPath);
+      const packageJsonExists =
+        await this.fileSystem.fileExists(packageJsonPath);
       if (!packageJsonExists) {
         return result;
       }
@@ -46,7 +47,10 @@ export class ExpressAnalyzer {
       const packageJson = JSON.parse(packageContent);
 
       // Check for Express
-      const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
+      const dependencies = {
+        ...packageJson.dependencies,
+        ...packageJson.devDependencies,
+      };
       if (dependencies && dependencies.express) {
         result.hasExpress = true;
         result.version = dependencies.express;
@@ -73,12 +77,15 @@ export class ExpressAnalyzer {
     }
   }
 
-  private async detectPort(projectPath: string, result: ExpressProjectInfo): Promise<void> {
+  private async detectPort(
+    projectPath: string,
+    result: ExpressProjectInfo
+  ): Promise<void> {
     try {
       // Check .env file
       const envPath = path.join(projectPath, '.env');
       const envExists = await this.fileSystem.fileExists(envPath);
-      
+
       if (envExists) {
         const envContent = await this.fileSystem.readFile(envPath);
         const portMatch = envContent.match(/PORT\s*=\s*(\d+)/);
@@ -96,7 +103,7 @@ export class ExpressAnalyzer {
       if (result.mainFile) {
         const mainPath = path.join(projectPath, result.mainFile);
         const mainExists = await this.fileSystem.fileExists(mainPath);
-        
+
         if (mainExists) {
           const mainContent = await this.fileSystem.readFile(mainPath);
           const portMatch = mainContent.match(/\.listen\(\s*(\d+)/);
@@ -110,7 +117,10 @@ export class ExpressAnalyzer {
     }
   }
 
-  private async detectMiddleware(projectPath: string, result: ExpressProjectInfo): Promise<void> {
+  private async detectMiddleware(
+    projectPath: string,
+    result: ExpressProjectInfo
+  ): Promise<void> {
     try {
       const packageJsonPath = path.join(projectPath, 'package.json');
       const packageContent = await this.fileSystem.readFile(packageJsonPath);
@@ -126,10 +136,10 @@ export class ExpressAnalyzer {
         'helmet',
         'morgan',
         'compression',
-        'express-session'
+        'express-session',
       ];
 
-      result.middleware = commonMiddleware.filter(mw => mw in allDeps);
+      result.middleware = commonMiddleware.filter((mw) => mw in allDeps);
     } catch {
       // Package.json already checked in main analyze method
     }

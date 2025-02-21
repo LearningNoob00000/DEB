@@ -37,7 +37,8 @@ export class EnvironmentAnalyzer {
       },
       {
         name: 'Database',
-        pattern: /(POSTGRES(?:QL)?|DATABASE)_(?:URI|URL|HOST|PRIMARY|SECONDARY)/i,
+        pattern:
+          /(POSTGRES(?:QL)?|DATABASE)_(?:URI|URL|HOST|PRIMARY|SECONDARY)/i,
         urlExtractor: (value: string): string =>
           value.includes('://') ? value : `postgresql://${value}`,
       },
@@ -70,7 +71,7 @@ export class EnvironmentAnalyzer {
     try {
       const envPath = path.join(projectPath, '.env');
       const envExamplePath = path.join(projectPath, '.env.example');
-      
+
       const result: EnvironmentConfig = {
         variables: {},
         hasEnvFile: false,
@@ -104,7 +105,7 @@ export class EnvironmentAnalyzer {
           const exampleContent = await this.fileSystem.readFile(envExamplePath);
           const exampleVars = this.parseEnvFile(exampleContent);
           const exampleServices = this.detectServices(exampleVars);
-          
+
           // Merge services without duplicates
           const existingNames = new Set(result.services.map((s) => s.name));
           const uniqueExampleServices = exampleServices.filter(
@@ -130,7 +131,7 @@ export class EnvironmentAnalyzer {
 
     for (const line of lines) {
       const trimmedLine = line.trim();
-      
+
       // Skip comments and empty lines
       if (!trimmedLine || trimmedLine.startsWith('#')) {
         continue;

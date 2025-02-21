@@ -34,11 +34,16 @@
     "changelog": "standard-version --skip.tag",
     "benchmark": "ts-node --expose-gc scripts/benchmark.ts",
     "benchmark:ci": "ts-node --expose-gc scripts/benchmark.ts > benchmark-results.txt",
-    "build": "tsc",
-    "postbuild": "chmod +x dist/cli/index.js",
     "build:binaries": "ts-node scripts/build.ts",
     "prerelease": "npm run build && npm run test",
-    "release:beta": "semantic-release --prerelease beta"
+    "release:beta": "semantic-release --prerelease beta","compile": "npm run clean && npm run build",
+    "clean": "rimraf dist/ *.tsbuildinfo",
+    "prebuild": "npm run clean",
+    "build": "tsc -p tsconfig.build.json",
+    "postbuild": "npm run make-executable",
+    "make-executable": "node -e \"require('fs').chmodSync('dist/cli/index.js', '755')\"",
+    "type-check": "tsc -p tsconfig.build.json --noEmit",
+    "type-check:tests": "tsc -p tests/tsconfig.json --noEmit"
   },
   "publishConfig": {
     "tag": "beta",

@@ -16,11 +16,13 @@ export function createExpressCommands(): Command[] {
   const fileSystem = new FileSystemUtils();
 
   // Create express parent command
-  const expressCommand = new Command('express')
-    .description('Express.js project commands');
+  const expressCommand = new Command('express').description(
+    'Express.js project commands'
+  );
 
   // Add analyze as a subcommand of express
-  expressCommand.command('analyze')
+  expressCommand
+    .command('analyze')
     .description('Analyze Express.js project')
     .argument('[dir]', 'Project directory', '.')
     .option('--json', 'Output as JSON')
@@ -45,18 +47,25 @@ export function createExpressCommands(): Command[] {
           console.log(`Main File: ${result.mainFile}`);
           console.log(`Port: ${result.port || 'Not detected'}`);
           console.log(`TypeScript: ${result.hasTypeScript ? 'Yes' : 'No'}`);
-          console.log('Middleware:', result.middleware.length ? result.middleware.join(', ') : 'None detected');
+          console.log(
+            'Middleware:',
+            result.middleware.length
+              ? result.middleware.join(', ')
+              : 'None detected'
+          );
         }
       } catch (error) {
         // Enhanced error handling with proper type guard
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         console.error('Analysis failed:', errorMessage);
         process.exit(1);
       }
     });
 
   // Add generate as a subcommand of express
-  expressCommand.command('generate')
+  expressCommand
+    .command('generate')
     .description('Generate Docker configuration')
     .argument('[dir]', 'Project directory', '.')
     .option('-d, --dev', 'Generate development configuration')
@@ -70,7 +79,9 @@ export function createExpressCommands(): Command[] {
         try {
           if (options.interactive) {
             const existingConfig = await configManager.loadConfig(dir);
-            config = await configManager.promptConfig(existingConfig || undefined);
+            config = await configManager.promptConfig(
+              existingConfig || undefined
+            );
           } else {
             // Handle port parsing with better validation - but keep error message matching the test
             let port = 3000; // Default port
@@ -84,16 +95,16 @@ export function createExpressCommands(): Command[] {
               }
               port = parsedPort;
             }
-            
+
             // Create configuration object
             config = {
               mode: options.dev ? 'development' : 'production',
               port: port,
               nodeVersion: options.nodeVersion || '18-alpine',
               volumes: [],
-              networks: []
+              networks: [],
             };
-            
+
             // Early validation of port range - keep error message matching the test
             if (!ConfigValidators.validatePort(config.port)) {
               console.error('Invalid configuration:');
@@ -104,7 +115,8 @@ export function createExpressCommands(): Command[] {
           }
         } catch (error) {
           // Enhanced configuration error handling
-          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
           console.error('Configuration error:', errorMessage);
           process.exit(1);
           return;
@@ -115,7 +127,7 @@ export function createExpressCommands(): Command[] {
         if (validationErrors.length > 0) {
           console.error('Invalid configuration:');
           // Map validation errors to match expected error format in tests
-          validationErrors.forEach(error => {
+          validationErrors.forEach((error) => {
             if (error.includes('Invalid port number.')) {
               console.error('- Invalid port number');
             } else {
@@ -141,7 +153,8 @@ export function createExpressCommands(): Command[] {
           projectInfo = await analyzer.analyze(dir);
           envInfo = await new ProjectScanner().scan(dir);
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
           console.error('Project analysis failed:', errorMessage);
           process.exit(1);
           return;
@@ -152,14 +165,14 @@ export function createExpressCommands(): Command[] {
           ...config,
           environment: envInfo.environment,
           hasTypeScript: projectInfo.hasTypeScript,
-          isDevelopment: config.mode === 'development'
+          isDevelopment: config.mode === 'development',
         });
 
         const dockerCompose = generator.generateCompose(projectInfo, {
           ...config,
           environment: envInfo.environment,
           hasTypeScript: projectInfo.hasTypeScript,
-          isDevelopment: config.mode === 'development'
+          isDevelopment: config.mode === 'development',
         });
 
         // Save configuration for future use if in interactive mode
@@ -167,7 +180,8 @@ export function createExpressCommands(): Command[] {
           try {
             await configManager.saveConfig(dir, config);
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
             console.error('Failed to save configuration:', errorMessage);
             // Continue with file generation despite config save failure
           }
@@ -176,15 +190,19 @@ export function createExpressCommands(): Command[] {
         // Write files with improved error handling
         const dockerfilePath = path.join(dir, 'Dockerfile');
         const dockerComposePath = path.join(dir, 'docker-compose.yml');
-        
+
         try {
           await Promise.all([
             fs.writeFile(dockerfilePath, dockerfile),
-            fs.writeFile(dockerComposePath, dockerCompose)
+            fs.writeFile(dockerComposePath, dockerCompose),
           ]);
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
-          console.error('Failed to write Docker configuration files:', errorMessage);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          console.error(
+            'Failed to write Docker configuration files:',
+            errorMessage
+          );
           process.exit(1);
           return;
         }
@@ -200,13 +218,16 @@ export function createExpressCommands(): Command[] {
         // Display detected services
         if (envInfo.environment?.services.length) {
           console.log('\nDetected services:');
-          envInfo.environment.services.forEach(service => {
-            console.log(`- ${service.name} (${service.required ? 'Required' : 'Optional'})`);
+          envInfo.environment.services.forEach((service) => {
+            console.log(
+              `- ${service.name} (${service.required ? 'Required' : 'Optional'})`
+            );
           });
         }
       } catch (error) {
         // Final catch-all error handler with proper type guard
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         console.error('Generation failed:', errorMessage);
         process.exit(1);
       }

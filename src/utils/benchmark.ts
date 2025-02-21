@@ -22,7 +22,7 @@ export class Benchmark {
   private static defaultOptions: Required<BenchmarkOptions> = {
     iterations: 1000,
     warmupIterations: 100,
-    name: 'Unnamed Benchmark'
+    name: 'Unnamed Benchmark',
   };
 
   /**
@@ -64,14 +64,14 @@ export class Benchmark {
       heapUsed: endMemory.heapUsed - startMemory.heapUsed,
       heapTotal: endMemory.heapTotal - startMemory.heapTotal,
       external: endMemory.external - startMemory.external,
-      rss: endMemory.rss - startMemory.rss
+      rss: endMemory.rss - startMemory.rss,
     };
 
     return {
       name: opts.name,
       duration,
       memoryUsage,
-      operationsPerSecond
+      operationsPerSecond,
     };
   }
 

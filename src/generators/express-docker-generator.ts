@@ -11,13 +11,17 @@ export interface DockerConfig {
 }
 
 export class ExpressDockerGenerator {
-  public generate(projectInfo: ExpressProjectInfo, config: Partial<DockerConfig> = {}): string {
+  public generate(
+    projectInfo: ExpressProjectInfo,
+    config: Partial<DockerConfig> = {}
+  ): string {
     const finalConfig: DockerConfig = {
       nodeVersion: config.nodeVersion || '18-alpine',
       port: config.port || projectInfo.port || 3000,
       hasTypeScript: config.hasTypeScript ?? projectInfo.hasTypeScript,
-      isDevelopment: config.isDevelopment !== undefined ? config.isDevelopment : true,
-      environment: config.environment
+      isDevelopment:
+        config.isDevelopment !== undefined ? config.isDevelopment : true,
+      environment: config.environment,
     };
 
     const stages: string[] = [];
@@ -40,8 +44,12 @@ ENV NODE_ENV=${finalConfig.isDevelopment ? 'development' : 'production'}
 ENV PORT=${finalConfig.port}
 ${this.generateEnvironmentVariables(finalConfig.environment)}
 
-${finalConfig.isDevelopment ? `# For development dependencies
-RUN npm install --only=development` : ''}
+${
+  finalConfig.isDevelopment
+    ? `# For development dependencies
+RUN npm install --only=development`
+    : ''
+}
 
 # Security (for production)
 ${!finalConfig.isDevelopment ? 'USER node' : ''}
@@ -52,21 +60,25 @@ CMD ["npm", "run", "${finalConfig.isDevelopment ? 'dev' : 'start'}"]`);
     return stages.join('\n');
   }
 
-  public generateCompose(projectInfo: ExpressProjectInfo, config: Partial<DockerConfig> = {}): string {
+  public generateCompose(
+    projectInfo: ExpressProjectInfo,
+    config: Partial<DockerConfig> = {}
+  ): string {
     const finalConfig: DockerConfig = {
       nodeVersion: config.nodeVersion || '18-alpine',
       port: config.port || projectInfo.port || 3000,
       hasTypeScript: config.hasTypeScript ?? projectInfo.hasTypeScript,
-      isDevelopment: config.isDevelopment !== undefined ? config.isDevelopment : false,
-      environment: config.environment
+      isDevelopment:
+        config.isDevelopment !== undefined ? config.isDevelopment : false,
+      environment: config.environment,
     };
 
     const services: string[] = [];
     const volumes: string[] = [];
     const serviceMappings: Record<string, string> = {
-      'MongoDB': 'mongodb',
-      'Redis': 'redis',
-      'RabbitMQ': 'rabbitmq',
+      MongoDB: 'mongodb',
+      Redis: 'redis',
+      RabbitMQ: 'rabbitmq',
       // Add more mappings as needed
     };
 
@@ -92,18 +104,25 @@ CMD ["npm", "run", "${finalConfig.isDevelopment ? 'dev' : 'start'}"]`);
       const serviceDependencies: string[] = [];
       const addedServices = new Set<string>();
 
-      config.environment.services.forEach(service => {
+      config.environment.services.forEach((service) => {
         const serviceName = service.name;
-        const serviceKey = serviceMappings[serviceName] || serviceName.toLowerCase().replace(/\s+/g, '');
-        
+        const serviceKey =
+          serviceMappings[serviceName] ||
+          serviceName.toLowerCase().replace(/\s+/g, '');
+
         // Skip if we've already added this service
         if (addedServices.has(serviceKey)) return;
-        
+
         // Filter environment-specific services
-        if (this.shouldFilterEnvironmentSpecificService(serviceName, finalConfig.isDevelopment)) {
+        if (
+          this.shouldFilterEnvironmentSpecificService(
+            serviceName,
+            finalConfig.isDevelopment
+          )
+        ) {
           return;
         }
-        
+
         switch (serviceKey) {
           case 'mongodb':
             services.push(`
@@ -117,7 +136,7 @@ CMD ["npm", "run", "${finalConfig.isDevelopment ? 'dev' : 'start'}"]`);
             serviceDependencies.push('mongodb');
             addedServices.add('mongodb');
             break;
-          
+
           case 'redis':
             services.push(`
   redis:
@@ -127,7 +146,7 @@ CMD ["npm", "run", "${finalConfig.isDevelopment ? 'dev' : 'start'}"]`);
             serviceDependencies.push('redis');
             addedServices.add('redis');
             break;
-            
+
           case 'rabbitmq':
             services.push(`
   rabbitmq:
@@ -142,12 +161,14 @@ CMD ["npm", "run", "${finalConfig.isDevelopment ? 'dev' : 'start'}"]`);
       });
 
       if (serviceDependencies.length > 0) {
-        services[0] += '\n    depends_on:\n      - ' + serviceDependencies.join('\n      - ');
+        services[0] +=
+          '\n    depends_on:\n      - ' +
+          serviceDependencies.join('\n      - ');
       }
     }
 
     let compose = `version: '3.8'\n\nservices:\n${services.join('\n')}`;
-    
+
     if (volumes.length > 0) {
       compose += '\n\nvolumes:\n' + volumes.join('\n');
     }
@@ -155,7 +176,9 @@ CMD ["npm", "run", "${finalConfig.isDevelopment ? 'dev' : 'start'}"]`);
     return compose;
   }
 
-  private generateEnvironmentVariables(environment?: EnvironmentConfig): string {
+  private generateEnvironmentVariables(
+    environment?: EnvironmentConfig
+  ): string {
     if (!environment?.variables) {
       return '';
     }
@@ -165,34 +188,44 @@ CMD ["npm", "run", "${finalConfig.isDevelopment ? 'dev' : 'start'}"]`);
       .join('\n');
   }
 
-  private generateEnvironmentVariablesForCompose(environment?: EnvironmentConfig, isDevelopment: boolean = false): string {
-  if (!environment?.variables) {
-    return '';
+  private generateEnvironmentVariablesForCompose(
+    environment?: EnvironmentConfig,
+    isDevelopment: boolean = false
+  ): string {
+    if (!environment?.variables) {
+      return '';
+    }
+
+    return Object.entries(environment.variables)
+      .filter(([key]) => {
+        // Apply the same environment-specific filtering to variables
+        return !this.shouldFilterEnvironmentSpecificVariable(
+          key,
+          isDevelopment
+        );
+      })
+      .map(([key, value]) => {
+        // Sanitize problematic URL values for tests
+        const sanitizedValue =
+          typeof value === 'string' && value.includes(':invalid:')
+            ? value.replace(/:invalid:url:/, 'invalid-value')
+            : value;
+        return `      - ${key}=${sanitizedValue}`;
+      })
+      .join('\n');
   }
 
-  return Object.entries(environment.variables)
-    .filter(([key]) => {
-      // Apply the same environment-specific filtering to variables
-      return !this.shouldFilterEnvironmentSpecificVariable(key, isDevelopment);
-    })
-    .map(([key, value]) => {
-      // Sanitize problematic URL values for tests
-      const sanitizedValue = typeof value === 'string' && value.includes(':invalid:') 
-        ? value.replace(/:invalid:url:/, 'invalid-value') 
-        : value;
-      return `      - ${key}=${sanitizedValue}`;
-    })
-    .join('\n');
-}
+  // Helper method for filtering environment variables by environment
+  private shouldFilterEnvironmentSpecificVariable(
+    variableName: string,
+    isDevelopment: boolean
+  ): boolean {
+    const keyToCheck = variableName.toLowerCase();
+    const isDevVar = keyToCheck.startsWith('dev_');
+    const isProdVar = keyToCheck.startsWith('prod_');
 
-// Helper method for filtering environment variables by environment
-private shouldFilterEnvironmentSpecificVariable(variableName: string, isDevelopment: boolean): boolean {
-  const keyToCheck = variableName.toLowerCase();
-  const isDevVar = keyToCheck.startsWith('dev_');
-  const isProdVar = keyToCheck.startsWith('prod_');
-  
-  return (isDevVar && !isDevelopment) || (isProdVar && isDevelopment);
-}
+    return (isDevVar && !isDevelopment) || (isProdVar && isDevelopment);
+  }
 
   // Helper method to sanitize URL values for tests
   private sanitizeUrlValue(value: string): string {
@@ -203,15 +236,18 @@ private shouldFilterEnvironmentSpecificVariable(variableName: string, isDevelopm
     return value;
   }
 
-  private shouldFilterEnvironmentSpecificService(serviceName: string, isDevelopment: boolean): boolean {
+  private shouldFilterEnvironmentSpecificService(
+    serviceName: string,
+    isDevelopment: boolean
+  ): boolean {
     const nameToCheck = serviceName.toLowerCase();
     const isDevService = nameToCheck.startsWith('dev_');
     const isProdService = nameToCheck.startsWith('prod_');
-    
+
     if ((isDevService && !isDevelopment) || (isProdService && isDevelopment)) {
       return true;
     }
-    
+
     return false;
   }
 }
