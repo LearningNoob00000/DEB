@@ -14,7 +14,7 @@ jest.mock('fs', () => ({
     unlink: jest.fn(),
     rm: jest.fn(),
     copyFile: jest.fn(),
-  }
+  },
 }));
 
 describe('FileSystemUtils Extended', () => {
@@ -31,22 +31,24 @@ describe('FileSystemUtils Extended', () => {
       (fs.writeFile as jest.Mock).mockResolvedValue(undefined);
 
       await fileSystem.writeFile('test.txt', 'content');
-      
+
       expect(fs.mkdir).toHaveBeenCalled();
-      expect(fs.writeFile).toHaveBeenCalledWith('test.txt', 'content', { encoding: 'utf8' });
+      expect(fs.writeFile).toHaveBeenCalledWith('test.txt', 'content', {
+        encoding: 'utf8',
+      });
     });
 
     it('should handle permission errors', async () => {
       const error = new Error('Permission denied');
       (error as NodeJS.ErrnoException).code = 'EACCES';
-      
+
       (fs.mkdir as jest.Mock).mockResolvedValue(undefined);
       (fs.writeFile as jest.Mock).mockRejectedValue(error);
 
-      await expect(fileSystem.writeFile('test.txt', 'content'))
-        .rejects
-        .toThrow(FileSystemError);
-      
+      await expect(fileSystem.writeFile('test.txt', 'content')).rejects.toThrow(
+        FileSystemError
+      );
+
       expect(fs.writeFile).toHaveBeenCalled();
     });
   });
@@ -56,19 +58,19 @@ describe('FileSystemUtils Extended', () => {
       (fs.mkdir as jest.Mock).mockResolvedValue(undefined);
 
       await fileSystem.ensureDir('/test/dir');
-      
+
       expect(fs.mkdir).toHaveBeenCalledWith('/test/dir', { recursive: true });
     });
 
     it('should handle permission errors', async () => {
       const error = new Error('Permission denied');
       (error as NodeJS.ErrnoException).code = 'EACCES';
-      
+
       (fs.mkdir as jest.Mock).mockRejectedValue(error);
 
-      await expect(fileSystem.ensureDir('/test/dir'))
-        .rejects
-        .toThrow(FileSystemError);
+      await expect(fileSystem.ensureDir('/test/dir')).rejects.toThrow(
+        FileSystemError
+      );
     });
   });
 
@@ -77,13 +79,13 @@ describe('FileSystemUtils Extended', () => {
       const mockFiles = [
         { name: 'file1.txt', isFile: () => true },
         { name: 'file2.txt', isFile: () => true },
-        { name: 'dir1', isFile: () => false }
+        { name: 'dir1', isFile: () => false },
       ];
-      
+
       (fs.readdir as jest.Mock).mockResolvedValue(mockFiles);
 
       const results = await fileSystem.listFiles('/test');
-      
+
       expect(results).toHaveLength(2);
       expect(results).toContain(path.join('/test', 'file1.txt'));
       expect(results).toContain(path.join('/test', 'file2.txt'));
@@ -93,13 +95,15 @@ describe('FileSystemUtils Extended', () => {
       const mockFiles = [
         { name: 'file1.txt', isFile: () => true },
         { name: 'ignored.txt', isFile: () => true },
-        { name: 'dir1', isFile: () => false }
+        { name: 'dir1', isFile: () => false },
       ];
-      
+
       (fs.readdir as jest.Mock).mockResolvedValue(mockFiles);
 
-      const results = await fileSystem.listFiles('/test', { ignore: ['ignored.txt'] });
-      
+      const results = await fileSystem.listFiles('/test', {
+        ignore: ['ignored.txt'],
+      });
+
       expect(results).toHaveLength(1);
       expect(results).toContain(path.join('/test', 'file1.txt'));
     });
@@ -107,12 +111,12 @@ describe('FileSystemUtils Extended', () => {
     it('should handle directory not found', async () => {
       const error = new Error('Directory not found');
       (error as NodeJS.ErrnoException).code = 'ENOENT';
-      
+
       (fs.readdir as jest.Mock).mockRejectedValue(error);
 
-      await expect(fileSystem.listFiles('/nonexistent'))
-        .rejects
-        .toThrow(FileSystemError);
+      await expect(fileSystem.listFiles('/nonexistent')).rejects.toThrow(
+        FileSystemError
+      );
     });
   });
 
@@ -122,7 +126,7 @@ describe('FileSystemUtils Extended', () => {
       (fs.unlink as jest.Mock).mockResolvedValue(undefined);
 
       await fileSystem.remove('test.txt');
-      
+
       expect(fs.unlink).toHaveBeenCalledWith('test.txt');
     });
 
@@ -131,14 +135,14 @@ describe('FileSystemUtils Extended', () => {
       (fs.rm as jest.Mock).mockResolvedValue(undefined);
 
       await fileSystem.remove('/test/dir');
-      
+
       expect(fs.rm).toHaveBeenCalledWith('/test/dir', { recursive: true });
     });
 
     it('should handle non-existent path gracefully', async () => {
       const error = new Error('No such file or directory');
       (error as NodeJS.ErrnoException).code = 'ENOENT';
-      
+
       (fs.stat as jest.Mock).mockRejectedValue(error);
 
       // Should not throw
@@ -153,26 +157,30 @@ describe('FileSystemUtils Extended', () => {
       (fs.copyFile as jest.Mock).mockResolvedValue(undefined);
 
       await fileSystem.copy('source.txt', 'dest.txt');
-      
+
       expect(fs.copyFile).toHaveBeenCalledWith('source.txt', 'dest.txt');
     });
 
     it('should copy a directory recursively', async () => {
       // First call is for the source directory
       (fs.stat as jest.Mock).mockResolvedValueOnce({ isDirectory: () => true });
-      
+
       // Mock readdir to return some files
       (fs.readdir as jest.Mock).mockResolvedValue(['file1.txt', 'file2.txt']);
-      
+
       // Subsequent stat calls for the files
-      (fs.stat as jest.Mock).mockResolvedValueOnce({ isDirectory: () => false });
-      (fs.stat as jest.Mock).mockResolvedValueOnce({ isDirectory: () => false });
-      
+      (fs.stat as jest.Mock).mockResolvedValueOnce({
+        isDirectory: () => false,
+      });
+      (fs.stat as jest.Mock).mockResolvedValueOnce({
+        isDirectory: () => false,
+      });
+
       (fs.mkdir as jest.Mock).mockResolvedValue(undefined);
       (fs.copyFile as jest.Mock).mockResolvedValue(undefined);
 
       await fileSystem.copy('/source', '/dest');
-      
+
       expect(fs.mkdir).toHaveBeenCalledWith('/dest', { recursive: true });
       expect(fs.copyFile).toHaveBeenCalledTimes(2);
     });
@@ -180,12 +188,12 @@ describe('FileSystemUtils Extended', () => {
     it('should handle source not found', async () => {
       const error = new Error('Source not found');
       (error as NodeJS.ErrnoException).code = 'ENOENT';
-      
+
       (fs.stat as jest.Mock).mockRejectedValue(error);
 
-      await expect(fileSystem.copy('nonexistent.txt', 'dest.txt'))
-        .rejects
-        .toThrow(FileSystemError);
+      await expect(
+        fileSystem.copy('nonexistent.txt', 'dest.txt')
+      ).rejects.toThrow(FileSystemError);
     });
   });
 });

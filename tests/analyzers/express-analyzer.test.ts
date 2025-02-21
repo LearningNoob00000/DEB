@@ -13,7 +13,7 @@ describe('ExpressAnalyzer', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Create mock implementation for FileSystemUtils
     mockFileSystem = {
       readFile: jest.fn(),
@@ -23,12 +23,12 @@ describe('ExpressAnalyzer', () => {
       listFiles: jest.fn(),
       findFiles: jest.fn(),
       remove: jest.fn(),
-      copy: jest.fn()
+      copy: jest.fn(),
     } as unknown as jest.Mocked<FileSystemUtils>;
-    
+
     // Make constructor return our mock
     (FileSystemUtils as jest.Mock).mockImplementation(() => mockFileSystem);
-    
+
     analyzer = new ExpressAnalyzer();
   });
 
@@ -37,9 +37,9 @@ describe('ExpressAnalyzer', () => {
       // Mock package.json with Express
       const mockPackageJson = {
         dependencies: {
-          'express': '^4.17.1'
+          express: '^4.17.1',
         },
-        main: 'index.js'
+        main: 'index.js',
       };
 
       const mockIndexJs = `
@@ -79,22 +79,24 @@ describe('ExpressAnalyzer', () => {
       expect(result.port).toBe(3000);
       expect(result.middleware).toEqual([]);
       expect(result.hasTypeScript).toBe(false);
-      
+
       // Verify that the correct paths were checked
-      expect(mockFileSystem.fileExists).toHaveBeenCalledWith(expect.stringContaining('package.json'));
+      expect(mockFileSystem.fileExists).toHaveBeenCalledWith(
+        expect.stringContaining('package.json')
+      );
     });
 
     it('should detect TypeScript usage', async () => {
       // Mock package.json with TypeScript
       const mockPackageJson = {
         dependencies: {
-          'express': '^4.17.1'
+          express: '^4.17.1',
         },
         devDependencies: {
-          'typescript': '^4.5.4',
-          '@types/express': '^4.17.13'
+          typescript: '^4.5.4',
+          '@types/express': '^4.17.13',
         },
-        main: 'dist/index.js'
+        main: 'dist/index.js',
       };
 
       // Mock tsconfig.json existence
@@ -123,14 +125,14 @@ describe('ExpressAnalyzer', () => {
       // Mock package.json with middleware
       const mockPackageJson = {
         dependencies: {
-          'express': '^4.17.1',
+          express: '^4.17.1',
           'body-parser': '^1.19.0',
-          'cors': '^2.8.5',
-          'helmet': '^4.6.0',
-          'morgan': '^1.10.0',
-          'compression': '^1.7.4'
+          cors: '^2.8.5',
+          helmet: '^4.6.0',
+          morgan: '^1.10.0',
+          compression: '^1.7.4',
         },
-        main: 'index.js'
+        main: 'index.js',
       };
 
       mockFileSystem.fileExists.mockImplementation(async (filePath) => {
@@ -162,9 +164,9 @@ describe('ExpressAnalyzer', () => {
       // Mock package.json
       const mockPackageJson = {
         dependencies: {
-          'express': '^4.17.1'
+          express: '^4.17.1',
         },
-        main: 'index.js'
+        main: 'index.js',
       };
 
       // Mock .env file
@@ -201,9 +203,9 @@ describe('ExpressAnalyzer', () => {
       // Mock package.json
       const mockPackageJson = {
         dependencies: {
-          'express': '^4.17.1'
+          express: '^4.17.1',
         },
-        main: 'server.js'
+        main: 'server.js',
       };
 
       // Mock server.js file with explicit port
@@ -261,11 +263,14 @@ describe('ExpressAnalyzer', () => {
       mockFileSystem.readFile.mockRejectedValue(new Error('Read error'));
 
       try {
-        // This should throw an error
         await analyzer.analyze('/fake/path');
         fail('Expected an error to be thrown');
-      } catch (error: any) { // Add type annotation here
-        expect(error.message).toContain('Express analysis failed');
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          expect(error.message).toContain('Express analysis failed');
+        } else {
+          fail('Expected error to be instance of Error');
+        }
       }
     });
   });

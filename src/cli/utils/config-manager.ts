@@ -1,4 +1,3 @@
-// src/cli/utils/config-manager.ts
 import inquirer from 'inquirer';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -49,8 +48,9 @@ export class ConfigManager {
         name: 'port',
         message: 'Enter application port:',
         default: defaults?.port?.toString() || '3000',
-        validate: (input: string) =>
-          !isNaN(Number(input)) || 'Please enter a valid port number',
+        validate: (input: string): boolean | string => {
+          return !isNaN(Number(input)) || 'Please enter a valid port number';
+        },
       },
       {
         type: 'input',
@@ -64,7 +64,9 @@ export class ConfigManager {
         message:
           'Enter volume mounts (comma-separated, e.g., ./data:/app/data):',
         default: defaults?.volumes?.join(',') || '',
-        filter: (input: string) => input.split(',').filter((v) => v.trim()),
+        filter: (input: string): string[] => {
+          return input.split(',').filter((v) => v.trim());
+        },
       },
     ]);
 

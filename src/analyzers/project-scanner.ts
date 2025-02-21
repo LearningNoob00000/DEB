@@ -72,18 +72,18 @@ export class ProjectScanner {
   }
 
   private async readPackageJson(projectPath: string): Promise<PackageJson> {
-  const packageJsonPath = path.join(projectPath, 'package.json');
-  try {
-    const content = await this.fileSystem.readFile(packageJsonPath);
+    const packageJsonPath = path.join(projectPath, 'package.json');
     try {
-      return JSON.parse(content) as PackageJson;
+      const content = await this.fileSystem.readFile(packageJsonPath);
+      try {
+        return JSON.parse(content) as PackageJson;
+      } catch (error) {
+        console.error('Failed to parse package.json');
+        return {};
+      }
     } catch (error) {
-      console.error('Failed to parse package.json');
-      return {}; 
+      console.error('Failed to read package.json:', error);
+      return {};
     }
-  } catch (error) {
-    console.error('Failed to read package.json:', error);
-    return {};
   }
-}
 }

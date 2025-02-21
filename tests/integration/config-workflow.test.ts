@@ -7,7 +7,7 @@ import inquirer from 'inquirer';
 
 // Mock the entire inquirer module
 jest.mock('inquirer', () => ({
-  prompt: jest.fn()
+  prompt: jest.fn(),
 }));
 
 describe('Configuration Workflow Integration', () => {
@@ -27,11 +27,13 @@ describe('Configuration Workflow Integration', () => {
       port: 3000,
       nodeVersion: '18-alpine',
       volumes: ['./data:/app/data'],
-      networks: []
+      networks: [],
     };
 
     // Mock interactive prompts
-    (inquirer.prompt as jest.MockedFunction<typeof inquirer.prompt>).mockResolvedValue(mockConfig);
+    (
+      inquirer.prompt as jest.MockedFunction<typeof inquirer.prompt>
+    ).mockResolvedValue(mockConfig);
 
     // Test configuration creation
     const config = await configManager.promptConfig();
@@ -51,16 +53,23 @@ describe('Configuration Workflow Integration', () => {
 
   it('should handle invalid configurations', async () => {
     const invalidConfig = {
-      mode: 'invalid' as any,
+      mode: 'invalid' as unknown as 'development' | 'production',
       port: -1,
       nodeVersion: '18-alpine',
       volumes: ['invalid-volume'],
-      networks: []
+      networks: [],
     };
 
-    const validationErrors = ConfigValidators.validateDockerConfig(invalidConfig);
-    expect(validationErrors).toContain('Invalid port number. Must be between 1 and 65535.');
-    expect(validationErrors).toContain('Mode must be either "development" or "production"');
-    expect(validationErrors).toContain('Invalid volume syntax at index 0: invalid-volume');
+    const validationErrors =
+      ConfigValidators.validateDockerConfig(invalidConfig);
+    expect(validationErrors).toContain(
+      'Invalid port number. Must be between 1 and 65535.'
+    );
+    expect(validationErrors).toContain(
+      'Mode must be either "development" or "production"'
+    );
+    expect(validationErrors).toContain(
+      'Invalid volume syntax at index 0: invalid-volume'
+    );
   });
 });

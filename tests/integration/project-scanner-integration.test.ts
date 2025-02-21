@@ -26,13 +26,13 @@ describe('Project Scanner Integration', () => {
       // Mock package.json with Express
       const mockPackageJson = {
         dependencies: {
-          'express': '^4.17.1',
-          'mongodb': '^4.0.0'
+          express: '^4.17.1',
+          mongodb: '^4.0.0',
         },
         devDependencies: {
-          'typescript': '^4.5.0',
-          'ts-node-dev': '^1.1.8'
-        }
+          typescript: '^4.5.0',
+          'ts-node-dev': '^1.1.8',
+        },
       };
 
       // Mock .env file
@@ -69,21 +69,24 @@ describe('Project Scanner Integration', () => {
       expect(scanResult.environment?.services).toContainEqual(
         expect.objectContaining({
           name: 'MongoDB',
-          required: true
+          required: true,
         })
       );
 
       // Generate Docker configuration based on scan results
-      const dockerCompose = dockerGenerator.generateCompose({
-        hasExpress: true,
-        version: '4.17.1',
-        mainFile: 'index.js',
-        port: 3000,
-        middleware: [],
-        hasTypeScript: true
-      }, {
-        environment: scanResult.environment
-      });
+      const dockerCompose = dockerGenerator.generateCompose(
+        {
+          hasExpress: true,
+          version: '4.17.1',
+          mainFile: 'index.js',
+          port: 3000,
+          middleware: [],
+          hasTypeScript: true,
+        },
+        {
+          environment: scanResult.environment,
+        }
+      );
 
       // Verify Docker configuration
       expect(dockerCompose).toContain('mongodb:');
@@ -94,23 +97,23 @@ describe('Project Scanner Integration', () => {
     it('should detect TypeScript configuration and dependencies', async () => {
       const mockPackageJson = {
         dependencies: {
-          'express': '^4.17.1'
+          express: '^4.17.1',
         },
         devDependencies: {
-          'typescript': '^4.5.0',
+          typescript: '^4.5.0',
           '@types/express': '^4.17.13',
-          'ts-node-dev': '^1.1.8'
-        }
+          'ts-node-dev': '^1.1.8',
+        },
       };
 
       const mockTsConfig = {
         compilerOptions: {
-          target: "ES2020",
-          module: "commonjs",
-          outDir: "./dist",
-          rootDir: "./src",
-          strict: true
-        }
+          target: 'ES2020',
+          module: 'commonjs',
+          outDir: './dist',
+          rootDir: './src',
+          strict: true,
+        },
       };
 
       mockFileSystem.fileExists.mockImplementation(async (filePath) => {
@@ -130,16 +133,19 @@ describe('Project Scanner Integration', () => {
       });
 
       const scanResult = await scanner.scan('/fake/path');
-      const dockerfile = dockerGenerator.generate({
-        hasExpress: true,
-        version: '4.17.1',
-        mainFile: 'src/index.ts',
-        port: 3000,
-        middleware: [],
-        hasTypeScript: true
-      }, {
-        environment: scanResult.environment
-      });
+      const dockerfile = dockerGenerator.generate(
+        {
+          hasExpress: true,
+          version: '4.17.1',
+          mainFile: 'src/index.ts',
+          port: 3000,
+          middleware: [],
+          hasTypeScript: true,
+        },
+        {
+          environment: scanResult.environment,
+        }
+      );
 
       // Verify TypeScript configuration in Dockerfile
       expect(dockerfile).toContain('COPY tsconfig.json ./');
@@ -150,11 +156,11 @@ describe('Project Scanner Integration', () => {
     it('should handle multiple service dependencies', async () => {
       const mockPackageJson = {
         dependencies: {
-          'express': '^4.17.1',
-          'mongodb': '^4.0.0',
-          'redis': '^4.0.0',
-          'amqplib': '^0.8.0'
-        }
+          express: '^4.17.1',
+          mongodb: '^4.0.0',
+          redis: '^4.0.0',
+          amqplib: '^0.8.0',
+        },
       };
 
       const mockEnvContent = `
@@ -180,25 +186,28 @@ describe('Project Scanner Integration', () => {
       });
 
       const scanResult = await scanner.scan('/fake/path');
-      const dockerCompose = dockerGenerator.generateCompose({
-        hasExpress: true,
-        version: '4.17.1',
-        mainFile: 'index.js',
-        port: 3000,
-        middleware: [],
-        hasTypeScript: false
-      }, {
-        environment: scanResult.environment
-      });
+      const dockerCompose = dockerGenerator.generateCompose(
+        {
+          hasExpress: true,
+          version: '4.17.1',
+          mainFile: 'index.js',
+          port: 3000,
+          middleware: [],
+          hasTypeScript: false,
+        },
+        {
+          environment: scanResult.environment,
+        }
+      );
 
       // Verify all services are configured
       expect(dockerCompose).toContain('mongodb:');
       expect(dockerCompose).toContain('redis:');
       expect(dockerCompose).toContain('rabbitmq:');
-      
+
       // Verify service dependencies
       expect(dockerCompose).toContain('depends_on:');
-      ['mongodb', 'redis', 'rabbitmq'].forEach(service => {
+      ['mongodb', 'redis', 'rabbitmq'].forEach((service) => {
         expect(dockerCompose).toContain(`- ${service}`);
       });
     });
@@ -211,113 +220,117 @@ describe('Project Scanner Integration', () => {
       expect(scanResult.hasPackageJson).toBe(false);
       expect(scanResult.dependencies).toEqual({
         dependencies: {},
-        devDependencies: {}
+        devDependencies: {},
       });
     });
 
     it('should detect and configure middleware dependencies', async () => {
-  const mockPackageJson = {
-    dependencies: {
-      'express': '^4.17.1',
-      'body-parser': '^1.19.0',
-      'cors': '^2.8.5',
-      'helmet': '^4.6.0'
-    }
-  };
+      const mockPackageJson = {
+        dependencies: {
+          express: '^4.17.1',
+          'body-parser': '^1.19.0',
+          cors: '^2.8.5',
+          helmet: '^4.6.0',
+        },
+      };
 
-  // Modified mocking strategy
-  mockFileSystem.fileExists.mockImplementation(async (filePath) => {
-    // Return true for any package.json path
-    return filePath.includes('package.json');
-  });
+      // Modified mocking strategy
+      mockFileSystem.fileExists.mockImplementation(async (filePath) => {
+        // Return true for any package.json path
+        return filePath.includes('package.json');
+      });
 
-  mockFileSystem.readFile.mockImplementation(async (filePath) => {
-    if (filePath.includes('package.json')) {
-      return JSON.stringify(mockPackageJson);
-    }
-    throw new Error('File not found');
-  });
+      mockFileSystem.readFile.mockImplementation(async (filePath) => {
+        if (filePath.includes('package.json')) {
+          return JSON.stringify(mockPackageJson);
+        }
+        throw new Error('File not found');
+      });
 
-  const scanResult = await scanner.scan('/fake/path');
-  
-  // Verify the dependencies from our mock are returned
-  expect(scanResult.dependencies.dependencies).toEqual(mockPackageJson.dependencies);
-});
+      const scanResult = await scanner.scan('/fake/path');
 
-// Fix for corrupted package.json test  
-it('should handle corrupted package.json', async () => {
-  // Mock package.json with invalid JSON
-  mockFileSystem.fileExists.mockResolvedValue(true);
-  mockFileSystem.readFile.mockImplementation(async (filePath) => {
-    if (filePath.includes('package.json')) {
-      return '{invalid:json}';
-    }
-    throw new Error('File not found');
-  });
+      // Verify the dependencies from our mock are returned
+      expect(scanResult.dependencies.dependencies).toEqual(
+        mockPackageJson.dependencies
+      );
+    });
 
-  // Since we're testing the error handling, we need to modify our expectations
-  // We expect a valid result with default values 
-  const scanResult = await scanner.scan('/fake/path');
-  expect(scanResult.projectType).toBe('unknown');
-  expect(scanResult.dependencies).toEqual({
-    dependencies: {},
-    devDependencies: {}
-  });
-});
+    // Fix for corrupted package.json test
+    it('should handle corrupted package.json', async () => {
+      // Mock package.json with invalid JSON
+      mockFileSystem.fileExists.mockResolvedValue(true);
+      mockFileSystem.readFile.mockImplementation(async (filePath) => {
+        if (filePath.includes('package.json')) {
+          return '{invalid:json}';
+        }
+        throw new Error('File not found');
+      });
+
+      // Since we're testing the error handling, we need to modify our expectations
+      // We expect a valid result with default values
+      const scanResult = await scanner.scan('/fake/path');
+      expect(scanResult.projectType).toBe('unknown');
+      expect(scanResult.dependencies).toEqual({
+        dependencies: {},
+        devDependencies: {},
+      });
+    });
   });
 
   describe('Error Handling and Edge Cases', () => {
     it('should handle corrupted package.json', async () => {
-  // Mock file system to return corrupted JSON
-  mockFileSystem.fileExists.mockResolvedValue(true);
-  mockFileSystem.readFile.mockImplementation(async (filePath: string) => {
-    if (filePath.includes('package.json')) {
-      // Return something that will produce a JSON parse error
-      return '{invalid:json}';
-    }
-    return '{}';
-  });
+      // Mock file system to return corrupted JSON
+      mockFileSystem.fileExists.mockResolvedValue(true);
+      mockFileSystem.readFile.mockImplementation(async (filePath: string) => {
+        if (filePath.includes('package.json')) {
+          // Return something that will produce a JSON parse error
+          return '{invalid:json}';
+        }
+        return '{}';
+      });
 
-  // The ProjectScanner should handle the JSON parse error internally
-  const scanResult = await scanner.scan('/fake/path');
-  
-  // We expect default values since parsing failed
-  expect(scanResult.projectType).toBe('unknown');
-  expect(scanResult.dependencies).toEqual({
-    dependencies: {},
-    devDependencies: {}
-  });
-});
+      // The ProjectScanner should handle the JSON parse error internally
+      const scanResult = await scanner.scan('/fake/path');
+
+      // We expect default values since parsing failed
+      expect(scanResult.projectType).toBe('unknown');
+      expect(scanResult.dependencies).toEqual({
+        dependencies: {},
+        devDependencies: {},
+      });
+    });
 
     it('should handle permission errors', async () => {
-  const error = new Error('Permission denied');
-  (error as NodeJS.ErrnoException).code = 'EACCES';
-  
-  mockFileSystem.fileExists.mockResolvedValue(true);
-  mockFileSystem.readFile.mockRejectedValue(error);
+      const error = new Error('Permission denied');
+      (error as NodeJS.ErrnoException).code = 'EACCES';
 
-  // Now we expect the scan to complete with default values
-  const result = await scanner.scan('/fake/path');
-  
-  // Verify default values are returned
-  expect(result.projectType).toBe('unknown');
-  expect(result.hasPackageJson).toBe(true); // fileExists is mocked to return true
-  expect(result.dependencies).toEqual({
-    dependencies: {},
-    devDependencies: {}
-  });
-});
+      mockFileSystem.fileExists.mockResolvedValue(true);
+      mockFileSystem.readFile.mockRejectedValue(error);
+
+      // Now we expect the scan to complete with default values
+      const result = await scanner.scan('/fake/path');
+
+      // Verify default values are returned
+      expect(result.projectType).toBe('unknown');
+      expect(result.hasPackageJson).toBe(true); // fileExists is mocked to return true
+      expect(result.dependencies).toEqual({
+        dependencies: {},
+        devDependencies: {},
+      });
+    });
 
     it('should detect non-Express Node.js projects', async () => {
       const mockPackageJson = {
         dependencies: {
-          'fastify': '^3.0.0',
-          'mongodb': '^4.0.0'
-        }
+          fastify: '^3.0.0',
+          mongodb: '^4.0.0',
+        },
       };
 
       mockFileSystem.fileExists.mockResolvedValue(true);
-      mockFileSystem.readFile.mockResolvedValue(JSON.stringify(mockPackageJson));
+      mockFileSystem.readFile.mockResolvedValue(
+        JSON.stringify(mockPackageJson)
+      );
 
       const scanResult = await scanner.scan('/fake/path');
       expect(scanResult.projectType).toBe('unknown');

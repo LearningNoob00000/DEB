@@ -19,14 +19,18 @@ jest.mock('fs', () => ({
   promises: {
     writeFile: jest.fn(),
     readFile: jest.fn(),
-    access: jest.fn()
-  }
+    access: jest.fn(),
+  },
 }));
 
 describe('CLI Workflow Integration', () => {
   let mockAnalyzer: jest.Mocked<ExpressAnalyzer>;
   let mockGenerator: jest.Mocked<ExpressDockerGenerator>;
-  let mockConfigManager: { loadConfig: jest.Mock; promptConfig: jest.Mock; saveConfig: jest.Mock };
+  let mockConfigManager: {
+    loadConfig: jest.Mock;
+    promptConfig: jest.Mock;
+    saveConfig: jest.Mock;
+  };
   let consoleLogSpy: jest.SpyInstance;
   let consoleErrorSpy: jest.SpyInstance;
   let originalExit: typeof process.exit;
@@ -40,7 +44,7 @@ describe('CLI Workflow Integration', () => {
     // Create mock commands that will be returned by createExpressCommands
     analyzeCommand = new Command('analyze');
     generateCommand = new Command('generate');
-      
+
     // Define parseAsync behavior
     analyzeCommand.parseAsync = jest.fn().mockResolvedValue(analyzeCommand);
     generateCommand.parseAsync = jest.fn().mockImplementation(async (args) => {
@@ -50,25 +54,37 @@ describe('CLI Workflow Integration', () => {
       }
       return generateCommand;
     });
-    
+
     // Make sure the mock returns these commands as an array
-    (createExpressCommands as jest.Mock).mockReturnValue([analyzeCommand, generateCommand]);
+    (createExpressCommands as jest.Mock).mockReturnValue([
+      analyzeCommand,
+      generateCommand,
+    ]);
 
     // Setup ConfigManager mock
     mockConfigManager = {
       loadConfig: jest.fn(),
       promptConfig: jest.fn(),
-      saveConfig: jest.fn()
+      saveConfig: jest.fn(),
     };
-    jest.spyOn(ConfigManager.prototype, 'loadConfig').mockImplementation(mockConfigManager.loadConfig);
-    jest.spyOn(ConfigManager.prototype, 'promptConfig').mockImplementation(mockConfigManager.promptConfig);
-    jest.spyOn(ConfigManager.prototype, 'saveConfig').mockImplementation(mockConfigManager.saveConfig);
+    jest
+      .spyOn(ConfigManager.prototype, 'loadConfig')
+      .mockImplementation(mockConfigManager.loadConfig);
+    jest
+      .spyOn(ConfigManager.prototype, 'promptConfig')
+      .mockImplementation(mockConfigManager.promptConfig);
+    jest
+      .spyOn(ConfigManager.prototype, 'saveConfig')
+      .mockImplementation(mockConfigManager.saveConfig);
 
     mockAnalyzer = new ExpressAnalyzer() as jest.Mocked<ExpressAnalyzer>;
-    mockGenerator = new ExpressDockerGenerator() as jest.Mocked<ExpressDockerGenerator>;
+    mockGenerator =
+      new ExpressDockerGenerator() as jest.Mocked<ExpressDockerGenerator>;
 
     (ExpressAnalyzer as jest.Mock).mockImplementation(() => mockAnalyzer);
-    (ExpressDockerGenerator as jest.Mock).mockImplementation(() => mockGenerator);
+    (ExpressDockerGenerator as jest.Mock).mockImplementation(
+      () => mockGenerator
+    );
 
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
@@ -89,7 +105,7 @@ describe('CLI Workflow Integration', () => {
       mainFile: 'index.js',
       port: 3000,
       middleware: ['body-parser'],
-      hasTypeScript: true
+      hasTypeScript: true,
     };
 
     const mockEnvInfo = {
@@ -97,14 +113,14 @@ describe('CLI Workflow Integration', () => {
       hasPackageJson: true,
       dependencies: {
         dependencies: {},
-        devDependencies: {}
+        devDependencies: {},
       },
       projectRoot: '/test',
       environment: {
         variables: {},
         hasEnvFile: false,
-        services: []
-      }
+        services: [],
+      },
     };
 
     mockAnalyzer.analyze.mockResolvedValue(mockProjectInfo);
@@ -115,10 +131,14 @@ describe('CLI Workflow Integration', () => {
     // Use the commands from beforeEach
     try {
       await generateCommand.parseAsync([
-        'node', 'test', '.',
+        'node',
+        'test',
+        '.',
         '--dev',
-        '--port', '3000',
-        '--node-version', '18-alpine'
+        '--port',
+        '3000',
+        '--node-version',
+        '18-alpine',
       ]);
 
       // Verify process.exit was not called
@@ -130,7 +150,7 @@ describe('CLI Workflow Integration', () => {
         expect(mockGenerator.generate).toHaveBeenCalledWith(
           mockProjectInfo,
           expect.objectContaining({
-            isDevelopment: true
+            isDevelopment: true,
           })
         );
       } else {
@@ -141,8 +161,11 @@ describe('CLI Workflow Integration', () => {
 
   it('should handle configuration validation errors', async () => {
     await generateCommand.parseAsync([
-      'node', 'test', '.',
-      '--port', '-1' // Invalid port
+      'node',
+      'test',
+      '.',
+      '--port',
+      '-1', // Invalid port
     ]);
 
     expect(process.exit).toHaveBeenCalledWith(1);
@@ -159,10 +182,7 @@ describe('CLI Workflow Integration', () => {
       return generateCommand;
     });
 
-    await generateCommand.parseAsync([
-      'node', 'test', '.',
-      '--dev'
-    ]);
+    await generateCommand.parseAsync(['node', 'test', '.', '--dev']);
 
     expect(process.exit).toHaveBeenCalledWith(1);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -178,7 +198,7 @@ describe('CLI Workflow Integration', () => {
       mainFile: 'index.js',
       port: 3000,
       middleware: [],
-      hasTypeScript: false
+      hasTypeScript: false,
     };
 
     const mockEnvInfo = {
@@ -186,14 +206,14 @@ describe('CLI Workflow Integration', () => {
       hasPackageJson: true,
       dependencies: {
         dependencies: {},
-        devDependencies: {}
+        devDependencies: {},
       },
       projectRoot: '/test',
       environment: {
         variables: {},
         hasEnvFile: false,
-        services: []
-      }
+        services: [],
+      },
     };
 
     mockAnalyzer.analyze.mockResolvedValue(mockProjectInfo);
@@ -209,10 +229,7 @@ describe('CLI Workflow Integration', () => {
       return generateCommand;
     });
 
-    await generateCommand.parseAsync([
-      'node', 'test', '.',
-      '--dev'
-    ]);
+    await generateCommand.parseAsync(['node', 'test', '.', '--dev']);
 
     expect(process.exit).toHaveBeenCalledWith(1);
     expect(consoleErrorSpy).toHaveBeenCalledWith(

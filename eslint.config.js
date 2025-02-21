@@ -40,7 +40,7 @@ module.exports = [
       parserOptions: {
         ecmaVersion: 2020,
         sourceType: 'module',
-        project: './tsconfig.json'
+        project: './tests/tsconfig.json'  // Point to tests tsconfig
       }
     },
     plugins: {
@@ -49,7 +49,7 @@ module.exports = [
     },
     rules: {
       'prettier/prettier': 'error',
-      '@typescript-eslint/explicit-function-return-type': 'warn',
+      '@typescript-eslint/explicit-function-return-type': 'off',  // Relaxed for tests
       '@typescript-eslint/no-explicit-any': 'warn'
     }
   }

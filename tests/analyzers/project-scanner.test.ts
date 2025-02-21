@@ -14,16 +14,19 @@ describe('ProjectScanner', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFileSystem = new FileSystemUtils() as jest.Mocked<FileSystemUtils>;
-    mockEnvAnalyzer = new EnvironmentAnalyzer() as jest.Mocked<EnvironmentAnalyzer>;
+    mockEnvAnalyzer =
+      new EnvironmentAnalyzer() as jest.Mocked<EnvironmentAnalyzer>;
 
     (FileSystemUtils as jest.Mock).mockImplementation(() => mockFileSystem);
-    (EnvironmentAnalyzer as jest.Mock).mockImplementation(() => mockEnvAnalyzer);
+    (EnvironmentAnalyzer as jest.Mock).mockImplementation(
+      () => mockEnvAnalyzer
+    );
 
     // Mock default environment analysis result
     mockEnvAnalyzer.analyze.mockResolvedValue({
       variables: {},
       hasEnvFile: false,
-      services: []
+      services: [],
     });
 
     scanner = new ProjectScanner();
@@ -33,19 +36,21 @@ describe('ProjectScanner', () => {
     it('should detect Express.js project', async () => {
       const mockPackageJson = {
         dependencies: {
-          'express': '^4.17.1'
-        }
+          express: '^4.17.1',
+        },
       };
 
       mockFileSystem.fileExists.mockResolvedValue(true);
-      mockFileSystem.readFile.mockResolvedValue(JSON.stringify(mockPackageJson));
+      mockFileSystem.readFile.mockResolvedValue(
+        JSON.stringify(mockPackageJson)
+      );
 
       const mockEnvResult = {
         variables: { PORT: '3000' },
         hasEnvFile: true,
         services: [
-          { name: 'Database', url: 'mongodb://localhost', required: true }
-        ]
+          { name: 'Database', url: 'mongodb://localhost', required: true },
+        ],
       };
       mockEnvAnalyzer.analyze.mockResolvedValue(mockEnvResult);
 
@@ -62,7 +67,7 @@ describe('ProjectScanner', () => {
       const mockEnvResult = {
         variables: {},
         hasEnvFile: false,
-        services: []
+        services: [],
       };
       mockEnvAnalyzer.analyze.mockResolvedValue(mockEnvResult);
 
@@ -76,7 +81,9 @@ describe('ProjectScanner', () => {
     it('should handle environment analysis errors', async () => {
       mockFileSystem.fileExists.mockResolvedValue(true);
       mockFileSystem.readFile.mockResolvedValue('{}');
-      mockEnvAnalyzer.analyze.mockRejectedValue(new Error('Environment analysis failed'));
+      mockEnvAnalyzer.analyze.mockRejectedValue(
+        new Error('Environment analysis failed')
+      );
 
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
@@ -85,7 +92,7 @@ describe('ProjectScanner', () => {
       expect(result.environment).toEqual({
         variables: {},
         hasEnvFile: false,
-        services: []
+        services: [],
       });
       expect(consoleSpy).toHaveBeenCalledWith(
         'Environment analysis failed:',

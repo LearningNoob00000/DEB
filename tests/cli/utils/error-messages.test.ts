@@ -9,7 +9,9 @@ describe('ErrorMessages', () => {
   });
 
   it('should export docker generation error messages', () => {
-    expect(ErrorMessages.DOCKER_GENERATION).toBe('Failed to generate Docker configuration');
+    expect(ErrorMessages.DOCKER_GENERATION).toBe(
+      'Failed to generate Docker configuration'
+    );
   });
 
   it('should export project analysis error messages', () => {
@@ -17,8 +19,14 @@ describe('ErrorMessages', () => {
   });
 
   it('should export validation error messages', () => {
-    expect(ErrorMessages.VALIDATION.PORT).toBe('Invalid port number. Must be between 1 and 65535');
-    expect(ErrorMessages.VALIDATION.VOLUME).toBe('Invalid volume mount syntax. Use format: source:target');
-    expect(ErrorMessages.VALIDATION.MODE).toBe('Invalid mode. Must be either "development" or "production"');
+    expect(ErrorMessages.VALIDATION.PORT).toBe(
+      'Invalid port number. Must be between 1 and 65535'
+    );
+    expect(ErrorMessages.VALIDATION.VOLUME).toBe(
+      'Invalid volume mount syntax. Use format: source:target'
+    );
+    expect(ErrorMessages.VALIDATION.MODE).toBe(
+      'Invalid mode. Must be either "development" or "production"'
+    );
   });
 });

@@ -34,21 +34,21 @@ describe('Analyze Command', () => {
       projectType: 'express' as const,
       hasPackageJson: true,
       dependencies: {
-        dependencies: { 'express': '^4.17.1' },
-        devDependencies: {}
+        dependencies: { express: '^4.17.1' },
+        devDependencies: {},
       },
       projectRoot: '/test',
       environment: {
         hasEnvFile: true,
         variables: {
           PORT: '3000',
-          NODE_ENV: 'development'
+          NODE_ENV: 'development',
         },
         services: [
           { name: 'Database', url: 'mongodb://localhost', required: true },
-          { name: 'Redis', url: 'redis://localhost', required: false }
-        ]
-      }
+          { name: 'Redis', url: 'redis://localhost', required: false },
+        ],
+      },
     };
 
     mockScanner.scan.mockResolvedValue(mockResult);
@@ -56,10 +56,18 @@ describe('Analyze Command', () => {
     const command = createAnalyzeCommand();
     await command.parseAsync(['node', 'test', '.']);
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Environment Configuration'));
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('✅ Found'));
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Database (Required)'));
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Redis (Optional)'));
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Environment Configuration')
+    );
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect.stringContaining('✅ Found')
+    );
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Database (Required)')
+    );
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Redis (Optional)')
+    );
   });
 
   it('should handle missing environment configuration', async () => {
@@ -68,14 +76,14 @@ describe('Analyze Command', () => {
       hasPackageJson: true,
       dependencies: {
         dependencies: {},
-        devDependencies: {}
+        devDependencies: {},
       },
       projectRoot: '/test',
       environment: {
         hasEnvFile: false,
         variables: {},
-        services: []
-      }
+        services: [],
+      },
     };
 
     mockScanner.scan.mockResolvedValue(mockResult);
@@ -83,6 +91,8 @@ describe('Analyze Command', () => {
     const command = createAnalyzeCommand();
     await command.parseAsync(['node', 'test', '.']);
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('❌ Not found'));
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect.stringContaining('❌ Not found')
+    );
   });
 });

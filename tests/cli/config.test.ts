@@ -6,8 +6,8 @@ import path from 'path';
 // Mock fs promises
 jest.mock('fs', () => ({
   promises: {
-    readFile: jest.fn()
-  }
+    readFile: jest.fn(),
+  },
 }));
 
 describe('ConfigManager', () => {
@@ -16,7 +16,7 @@ describe('ConfigManager', () => {
     outputFormat: 'simple',
     timeout: 30000,
     batchSize: 10,
-    excludePatterns: ['node_modules', '.git']
+    excludePatterns: ['node_modules', '.git'],
   };
 
   beforeEach(() => {
@@ -31,12 +31,12 @@ describe('ConfigManager', () => {
         outputFormat: 'json',
         timeout: 60000,
         batchSize: 20,
-        excludePatterns: ['node_modules', '.git', 'dist']
+        excludePatterns: ['node_modules', '.git', 'dist'],
       };
 
       // Clear previous mocks
       (fs.readFile as jest.Mock).mockReset();
-      
+
       // Mock readFile to return our config
       (fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockConfig));
 
@@ -44,7 +44,7 @@ describe('ConfigManager', () => {
 
       // Verify readFile was called
       expect(fs.readFile).toHaveBeenCalled();
-      
+
       // Verify the config is what we expect
       expect(config).toMatchObject(mockConfig);
     });
@@ -52,12 +52,12 @@ describe('ConfigManager', () => {
     it('should load configuration from current working directory when path not specified', async () => {
       const mockConfig = {
         outputFormat: 'table',
-        batchSize: 5
+        batchSize: 5,
       };
-      
+
       // Clear previous mocks
       (fs.readFile as jest.Mock).mockReset();
-      
+
       // Mock readFile to return our config
       (fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockConfig));
 
@@ -65,10 +65,10 @@ describe('ConfigManager', () => {
 
       // Verify readFile was called
       expect(fs.readFile).toHaveBeenCalled();
-      
+
       // Check that config contains our values
       expect(config).toMatchObject(mockConfig);
-      
+
       // Verify the rest of the config is filled with defaults
       expect(config.timeout).toBe(DEFAULT_CONFIG.timeout);
       expect(config.excludePatterns).toEqual(DEFAULT_CONFIG.excludePatterns);
@@ -94,17 +94,19 @@ describe('ConfigManager', () => {
 
     it('should merge partial config with defaults', async () => {
       const partialConfig = {
-        outputFormat: 'json'
+        outputFormat: 'json',
       };
-      
+
       // Mock readFile
-      (fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(partialConfig));
+      (fs.readFile as jest.Mock).mockResolvedValue(
+        JSON.stringify(partialConfig)
+      );
 
       const config = await configManager.loadConfig();
 
       // Check specific property was updated
       expect(config.outputFormat).toBe('json');
-      
+
       // Check defaults were preserved
       expect(config.timeout).toBe(DEFAULT_CONFIG.timeout);
       expect(config.batchSize).toBe(DEFAULT_CONFIG.batchSize);

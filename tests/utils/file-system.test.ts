@@ -14,7 +14,7 @@ jest.mock('fs', () => ({
     unlink: jest.fn(),
     rm: jest.fn(),
     copyFile: jest.fn(),
-  }
+  },
 }));
 
 describe('FileSystemUtils', () => {
@@ -39,9 +39,9 @@ describe('FileSystemUtils', () => {
       error.code = 'ENOENT';
       (fs.readFile as jest.Mock).mockRejectedValue(error);
 
-      await expect(fileSystem.readFile('nonexistent.txt'))
-        .rejects
-        .toThrow(FileSystemError);
+      await expect(fileSystem.readFile('nonexistent.txt')).rejects.toThrow(
+        FileSystemError
+      );
     });
   });
 
@@ -66,7 +66,7 @@ describe('FileSystemUtils', () => {
       (fs.readdir as jest.Mock).mockResolvedValue(mockFiles);
 
       const results = await fileSystem.findFiles('.', ['*.ts'], {
-        ignore: ['node_modules']
+        ignore: ['node_modules'],
       });
       expect(results).toHaveLength(1);
     });

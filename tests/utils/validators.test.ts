@@ -18,14 +18,22 @@ describe('ConfigValidators', () => {
 
   describe('validateVolumeSyntax', () => {
     it('should validate correct volume syntax', () => {
-      expect(ConfigValidators.validateVolumeSyntax('./data:/app/data')).toBe(true);
-      expect(ConfigValidators.validateVolumeSyntax('/host/path:/container/path')).toBe(true);
+      expect(ConfigValidators.validateVolumeSyntax('./data:/app/data')).toBe(
+        true
+      );
+      expect(
+        ConfigValidators.validateVolumeSyntax('/host/path:/container/path')
+      ).toBe(true);
     });
 
     it('should invalidate incorrect volume syntax', () => {
-      expect(ConfigValidators.validateVolumeSyntax('invalid-volume')).toBe(false);
+      expect(ConfigValidators.validateVolumeSyntax('invalid-volume')).toBe(
+        false
+      );
       expect(ConfigValidators.validateVolumeSyntax('')).toBe(false);
-      expect(ConfigValidators.validateVolumeSyntax('only-one-part')).toBe(false);
+      expect(ConfigValidators.validateVolumeSyntax('only-one-part')).toBe(
+        false
+      );
     });
   });
 
@@ -36,7 +44,7 @@ describe('ConfigValidators', () => {
         port: 3000,
         nodeVersion: '18-alpine',
         volumes: ['./data:/app/data'],
-        networks: []
+        networks: [],
       };
 
       const errors = ConfigValidators.validateDockerConfig(validConfig);
@@ -45,17 +53,23 @@ describe('ConfigValidators', () => {
 
     it('should collect all validation errors', () => {
       const invalidConfig = {
-        mode: 'invalid' as any,
+        mode: 'invalid' as unknown as 'development' | 'production',
         port: -1,
         nodeVersion: '18-alpine',
         volumes: ['invalid-volume'],
-        networks: []
+        networks: [],
       };
 
       const errors = ConfigValidators.validateDockerConfig(invalidConfig);
-      expect(errors).toContain('Invalid port number. Must be between 1 and 65535.');
-      expect(errors).toContain('Mode must be either "development" or "production"');
-      expect(errors).toContain('Invalid volume syntax at index 0: invalid-volume');
+      expect(errors).toContain(
+        'Invalid port number. Must be between 1 and 65535.'
+      );
+      expect(errors).toContain(
+        'Mode must be either "development" or "production"'
+      );
+      expect(errors).toContain(
+        'Invalid volume syntax at index 0: invalid-volume'
+      );
     });
   });
 });

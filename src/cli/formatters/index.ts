@@ -38,16 +38,13 @@ export class TableFormatter implements OutputFormatter {
       head: ['Property', 'Value'],
       style: {
         head: ['cyan'],
-        border: ['gray']
-      }
+        border: ['gray'],
+      },
     });
 
     try {
       Object.entries(data).forEach(([key, value]) => {
-        table.push([
-          key,
-          this.formatValue(value)
-        ]);
+        table.push([key, this.formatValue(value)]);
       });
 
       return table.toString();

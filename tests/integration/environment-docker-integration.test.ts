@@ -18,7 +18,7 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
     mainFile: 'index.js',
     port: 3000,
     middleware: [],
-    hasTypeScript: false
+    hasTypeScript: false,
   };
 
   beforeEach(() => {
@@ -41,7 +41,7 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
 
       const envConfig = await analyzer.analyze('/fake/path');
       const dockerCompose = generator.generateCompose(baseProjectInfo, {
-        environment: envConfig
+        environment: envConfig,
       });
 
       // Verify MongoDB service configuration
@@ -65,7 +65,7 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
 
       const envConfig = await analyzer.analyze('/fake/path');
       const dockerCompose = generator.generateCompose(baseProjectInfo, {
-        environment: envConfig
+        environment: envConfig,
       });
 
       // Verify multiple service configurations
@@ -73,7 +73,7 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
       expect(dockerCompose).toContain('redis:');
       expect(dockerCompose).toContain('rabbitmq:');
       expect(dockerCompose).toContain('depends_on:');
-      ['mongodb', 'redis', 'rabbitmq'].forEach(service => {
+      ['mongodb', 'redis', 'rabbitmq'].forEach((service) => {
         expect(dockerCompose).toContain(`- ${service}`);
       });
     });
@@ -89,7 +89,7 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
 
       const envConfig = await analyzer.analyze('/fake/path');
       const dockerCompose = generator.generateCompose(baseProjectInfo, {
-        environment: envConfig
+        environment: envConfig,
       });
 
       // Verify optional service handling
@@ -110,7 +110,7 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
       const envConfig = await analyzer.analyze('/fake/path');
       const dockerCompose = generator.generateCompose(baseProjectInfo, {
         environment: envConfig,
-        isDevelopment: true
+        isDevelopment: true,
       });
 
       // Verify environment-specific configuration
@@ -131,7 +131,7 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
 
       const envConfig = await analyzer.analyze('/fake/path');
       const dockerfile = generator.generate(baseProjectInfo, {
-        environment: envConfig
+        environment: envConfig,
       });
 
       // Verify Dockerfile environment configuration
@@ -151,12 +151,16 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
 
       const envConfig = await analyzer.analyze('/fake/path');
       const dockerCompose = generator.generateCompose(baseProjectInfo, {
-        environment: envConfig
+        environment: envConfig,
       });
 
       // Verify credential handling
-      expect(dockerCompose).toContain('MONGODB_URI=mongodb://user:pass@host:27017/db?retryWrites=true');
-      expect(dockerCompose).toContain('DATABASE_URL=postgresql://admin:secret@localhost:5432/app');
+      expect(dockerCompose).toContain(
+        'MONGODB_URI=mongodb://user:pass@host:27017/db?retryWrites=true'
+      );
+      expect(dockerCompose).toContain(
+        'DATABASE_URL=postgresql://admin:secret@localhost:5432/app'
+      );
     });
 
     it('should configure TypeScript build process with services', async () => {
@@ -169,10 +173,10 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
 
       const tsProjectInfo = { ...baseProjectInfo, hasTypeScript: true };
       const envConfig = await analyzer.analyze('/fake/path');
-      
+
       const dockerfile = generator.generate(tsProjectInfo, {
         environment: envConfig,
-        isDevelopment: true
+        isDevelopment: true,
       });
 
       // Verify TypeScript configuration with services
@@ -188,11 +192,11 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
 
       const envConfig = await analyzer.analyze('/fake/path');
       const dockerCompose = generator.generateCompose(baseProjectInfo, {
-        environment: envConfig
+        environment: envConfig,
       });
 
       // Verify basic configuration still works
-      expect(dockerCompose).toContain('version: \'3.8\'');
+      expect(dockerCompose).toContain("version: '3.8'");
       expect(dockerCompose).toContain('services:');
       expect(dockerCompose).toContain('app:');
     });
@@ -208,7 +212,7 @@ describe('Environment Analyzer and Docker Generator Integration', () => {
 
       const envConfig = await analyzer.analyze('/fake/path');
       const dockerCompose = generator.generateCompose(baseProjectInfo, {
-        environment: envConfig
+        environment: envConfig,
       });
 
       // Verify error handling in URL processing

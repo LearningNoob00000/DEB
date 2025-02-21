@@ -16,7 +16,10 @@ export class TestUtils {
   /**
    * Creates a mock project structure for testing
    */
-  static async createMockProject(dir: string, files: Record<string, string>): Promise<void> {
+  static async createMockProject(
+    dir: string,
+    files: Record<string, string>
+  ): Promise<void> {
     for (const [filePath, content] of Object.entries(files)) {
       const fullPath = join(dir, filePath);
       await fs.mkdir(join(fullPath, '..'), { recursive: true });

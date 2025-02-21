@@ -11,15 +11,15 @@ describe('CLI Performance Benchmarks', () => {
   const mockFileSystem = () => {
     const mockPackageJson = {
       dependencies: {
-        'express': '^4.17.1',
-        'mongodb': '^4.0.0',
-        'redis': '^4.0.0',
-        'amqplib': '^0.8.0'
+        express: '^4.17.1',
+        mongodb: '^4.0.0',
+        redis: '^4.0.0',
+        amqplib: '^0.8.0',
       },
       devDependencies: {
-        'typescript': '^4.5.0',
-        '@types/express': '^4.17.13'
-      }
+        typescript: '^4.5.0',
+        '@types/express': '^4.17.13',
+      },
     };
 
     const mockEnvContent = `
@@ -33,20 +33,24 @@ describe('CLI Performance Benchmarks', () => {
     `;
 
     jest.spyOn(FileSystemUtils.prototype, 'fileExists').mockResolvedValue(true);
-    jest.spyOn(FileSystemUtils.prototype, 'readFile').mockImplementation(async (filePath: string) => {
-      const basename = path.basename(filePath);
-      if (basename === 'package.json') return JSON.stringify(mockPackageJson);
-      if (basename === '.env') return mockEnvContent;
-      // For testing paths like C:\fake\path\package.json
-      if (filePath.includes('package.json')) return JSON.stringify(mockPackageJson);
-      if (filePath.includes('.env')) return mockEnvContent;
-      if (filePath.includes('index.js')) return `
+    jest
+      .spyOn(FileSystemUtils.prototype, 'readFile')
+      .mockImplementation(async (filePath: string) => {
+        const basename = path.basename(filePath);
+        if (basename === 'package.json') return JSON.stringify(mockPackageJson);
+        if (basename === '.env') return mockEnvContent;
+        // For testing paths like C:\fake\path\package.json
+        if (filePath.includes('package.json'))
+          return JSON.stringify(mockPackageJson);
+        if (filePath.includes('.env')) return mockEnvContent;
+        if (filePath.includes('index.js'))
+          return `
         const express = require('express');
         const app = express();
         app.listen(3000);
       `;
-      return '';  // Return empty string for any other files
-    });
+        return ''; // Return empty string for any other files
+      });
   };
 
   beforeEach(() => {
@@ -66,7 +70,7 @@ describe('CLI Performance Benchmarks', () => {
       {
         name: 'Project Scanner',
         iterations: 1000,
-        warmupIterations: 100
+        warmupIterations: 100,
       }
     );
 
@@ -86,7 +90,7 @@ describe('CLI Performance Benchmarks', () => {
       {
         name: 'Express Analyzer',
         iterations: 1000,
-        warmupIterations: 100
+        warmupIterations: 100,
       }
     );
 
@@ -103,7 +107,7 @@ describe('CLI Performance Benchmarks', () => {
       mainFile: 'src/index.ts',
       port: 3000,
       middleware: ['body-parser', 'cors', 'helmet'],
-      hasTypeScript: true
+      hasTypeScript: true,
     };
 
     // Pre-scan for environment config
@@ -116,20 +120,20 @@ describe('CLI Performance Benchmarks', () => {
           nodeVersion: '18-alpine',
           port: 3000,
           hasTypeScript: true,
-          isDevelopment: true
+          isDevelopment: true,
         });
         generator.generateCompose(projectInfo, {
           environment: scanResult.environment,
           nodeVersion: '18-alpine',
           port: 3000,
           hasTypeScript: true,
-          isDevelopment: true
+          isDevelopment: true,
         });
       },
       {
         name: 'Docker Generator',
         iterations: 1000,
-        warmupIterations: 100
+        warmupIterations: 100,
       }
     );
 
@@ -138,47 +142,49 @@ describe('CLI Performance Benchmarks', () => {
   });
 
   it('should benchmark environment analysis performance', async () => {
-  // Create a complex environment setup
-  const complexEnv = Array.from({ length: 100 }, (_, i) => {
-    return `SERVICE_${i}_URL=http://localhost:${8000 + i}
+    // Create a complex environment setup
+    const complexEnv = Array.from({ length: 100 }, (_, i) => {
+      return `SERVICE_${i}_URL=http://localhost:${8000 + i}
 SERVICE_${i}_KEY=key${i}
 SERVICE_${i}_SECRET=secret${i}`;
-  }).join('\n');
+    }).join('\n');
 
-  // Create a new mock implementation instead of reusing the original
-  jest.spyOn(FileSystemUtils.prototype, 'readFile').mockImplementation(async (filePath: string) => {
-    const basename = path.basename(filePath);
-    if (basename === '.env' || filePath.includes('.env')) {
-      return complexEnv;
-    }
-    if (basename === 'package.json' || filePath.includes('package.json')) {
-      return JSON.stringify({
-        dependencies: {
-          'express': '^4.17.1'
-        },
-        devDependencies: {
-          'typescript': '^4.5.0'
+    // Create a new mock implementation instead of reusing the original
+    jest
+      .spyOn(FileSystemUtils.prototype, 'readFile')
+      .mockImplementation(async (filePath: string) => {
+        const basename = path.basename(filePath);
+        if (basename === '.env' || filePath.includes('.env')) {
+          return complexEnv;
         }
+        if (basename === 'package.json' || filePath.includes('package.json')) {
+          return JSON.stringify({
+            dependencies: {
+              express: '^4.17.1',
+            },
+            devDependencies: {
+              typescript: '^4.5.0',
+            },
+          });
+        }
+        return '';
       });
-    }
-    return '';
+
+    const analyzer = new ExpressAnalyzer();
+    const result = await Benchmark.run(
+      async () => {
+        await analyzer.analyze('/fake/path');
+      },
+      {
+        name: 'Environment Analysis (100 services)',
+        iterations: 100,
+        warmupIterations: 10,
+      }
+    );
+
+    expect(result.operationsPerSecond).toBeGreaterThan(50);
+    console.log(Benchmark.formatResults(result));
   });
-
-  const analyzer = new ExpressAnalyzer();
-  const result = await Benchmark.run(
-    async () => {
-      await analyzer.analyze('/fake/path');
-    },
-    {
-      name: 'Environment Analysis (100 services)',
-      iterations: 100,
-      warmupIterations: 10
-    }
-  );
-
-  expect(result.operationsPerSecond).toBeGreaterThan(50);
-  console.log(Benchmark.formatResults(result));
-});
 
   it('should benchmark full CLI workflow', async () => {
     // Use our improved mocks with the updated ExpressAnalyzer
@@ -191,13 +197,13 @@ SERVICE_${i}_SECRET=secret${i}`;
         // Simulate complete CLI workflow
         const scanResult = await scanner.scan('/fake/path');
         const expressInfo = await analyzer.analyze('/fake/path');
-        
+
         generator.generate(expressInfo, {
           environment: scanResult.environment,
           nodeVersion: '18-alpine',
           port: 3000,
           hasTypeScript: true,
-          isDevelopment: true
+          isDevelopment: true,
         });
 
         generator.generateCompose(expressInfo, {
@@ -205,13 +211,13 @@ SERVICE_${i}_SECRET=secret${i}`;
           nodeVersion: '18-alpine',
           port: 3000,
           hasTypeScript: true,
-          isDevelopment: true
+          isDevelopment: true,
         });
       },
       {
         name: 'Complete CLI Workflow',
         iterations: 100,
-        warmupIterations: 10
+        warmupIterations: 10,
       }
     );
 
@@ -227,23 +233,26 @@ SERVICE_${i}_SECRET=secret${i}`;
       ),
       devDependencies: Object.fromEntries(
         Array.from({ length: 1000 }, (_, i) => [`devDep${i}`, `^0.1.${i}`])
-      )
+      ),
     };
 
-    const largeEnv = Array.from({ length: 1000 }, (_, i) => 
-      `VAR_${i}=value${i}`
+    const largeEnv = Array.from(
+      { length: 1000 },
+      (_, i) => `VAR_${i}=value${i}`
     ).join('\n');
 
-    jest.spyOn(FileSystemUtils.prototype, 'readFile').mockImplementation(async (filePath: string) => {
-      const basename = path.basename(filePath);
-      if (basename === 'package.json' || filePath.includes('package.json')) {
-        return JSON.stringify(largePackageJson);
-      }
-      if (basename === '.env' || filePath.includes('.env')) {
-        return largeEnv;
-      }
-      return '';
-    });
+    jest
+      .spyOn(FileSystemUtils.prototype, 'readFile')
+      .mockImplementation(async (filePath: string) => {
+        const basename = path.basename(filePath);
+        if (basename === 'package.json' || filePath.includes('package.json')) {
+          return JSON.stringify(largePackageJson);
+        }
+        if (basename === '.env' || filePath.includes('.env')) {
+          return largeEnv;
+        }
+        return '';
+      });
 
     const scanner = new ProjectScanner();
     const result = await Benchmark.run(
@@ -253,7 +262,7 @@ SERVICE_${i}_SECRET=secret${i}`;
       {
         name: 'Large Project Analysis',
         iterations: 10,
-        warmupIterations: 2
+        warmupIterations: 2,
       }
     );
 

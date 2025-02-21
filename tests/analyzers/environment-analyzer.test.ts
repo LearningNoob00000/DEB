@@ -34,7 +34,7 @@ describe('EnvironmentAnalyzer', () => {
         expect(result.variables).toEqual({
           DB_HOST: 'localhost',
           DB_PORT: '5432',
-          API_KEY: 'secret'
+          API_KEY: 'secret',
         });
       });
 
@@ -78,7 +78,7 @@ describe('EnvironmentAnalyzer', () => {
         expect(result.variables).toEqual({
           DB_HOST: 'localhost',
           API_KEY: 'secret',
-          EMPTY_VAR: ''
+          EMPTY_VAR: '',
         });
       });
     });
@@ -100,12 +100,12 @@ describe('EnvironmentAnalyzer', () => {
         expect(result.services).toContainEqual({
           name: 'MongoDB',
           url: 'mongodb://localhost:27017/db',
-          required: true
+          required: true,
         });
         expect(result.services).toContainEqual({
           name: 'Database',
           url: 'postgresql://user:pass@localhost:5432/db',
-          required: true
+          required: true,
         });
       });
 
@@ -124,17 +124,17 @@ describe('EnvironmentAnalyzer', () => {
         expect(result.services).toContainEqual({
           name: 'Redis',
           url: 'redis://localhost:6379',
-          required: true
+          required: true,
         });
         expect(result.services).toContainEqual({
           name: 'RabbitMQ',
           url: 'amqp://localhost:5672',
-          required: true
+          required: true,
         });
         expect(result.services).toContainEqual({
           name: 'Kafka',
           url: 'localhost:9092',
-          required: true
+          required: true,
         });
       });
 
@@ -152,12 +152,12 @@ describe('EnvironmentAnalyzer', () => {
         expect(result.services).toContainEqual({
           name: 'Redis',
           url: 'redis://localhost:6379',
-          required: false
+          required: false,
         });
         expect(result.services).toContainEqual({
           name: 'Elasticsearch',
           url: 'http://localhost:9200',
-          required: false
+          required: false,
         });
       });
 
@@ -174,8 +174,12 @@ describe('EnvironmentAnalyzer', () => {
 
         const result = await analyzer.analyze('/fake/path');
 
-        expect(result.services.filter(s => s.name === 'MongoDB')).toHaveLength(2);
-        expect(result.services.filter(s => s.name === 'Redis')).toHaveLength(2);
+        expect(
+          result.services.filter((s) => s.name === 'MongoDB')
+        ).toHaveLength(2);
+        expect(result.services.filter((s) => s.name === 'Redis')).toHaveLength(
+          2
+        );
       });
     });
 
@@ -206,18 +210,20 @@ describe('EnvironmentAnalyzer', () => {
 
         expect(result.variables).toEqual({
           VALID_VAR: 'value',
-          ANOTHER_VALID_VAR: 'value2'
+          ANOTHER_VALID_VAR: 'value2',
         });
       });
 
       it('should handle permission errors', async () => {
         const error = new Error('Permission denied');
         (error as NodeJS.ErrnoException).code = 'EACCES';
-        
+
         mockFileSystem.fileExists.mockResolvedValueOnce(true);
         mockFileSystem.readFile.mockRejectedValueOnce(error);
 
-        await expect(analyzer.analyze('/fake/path')).rejects.toThrow('Permission denied');
+        await expect(analyzer.analyze('/fake/path')).rejects.toThrow(
+          'Permission denied'
+        );
       });
     });
 
@@ -234,18 +240,24 @@ describe('EnvironmentAnalyzer', () => {
 
         const result = await analyzer.analyze('/fake/path');
 
-        expect(result.services).toContainEqual(expect.objectContaining({
-          name: 'Database',
-          url: expect.stringContaining('postgresql://')
-        }));
-        expect(result.services).toContainEqual(expect.objectContaining({
-          name: 'Redis',
-          url: expect.stringContaining('redis://')
-        }));
-        expect(result.services).toContainEqual(expect.objectContaining({
-          name: 'MongoDB',
-          url: expect.stringContaining('mongodb+srv://')
-        }));
+        expect(result.services).toContainEqual(
+          expect.objectContaining({
+            name: 'Database',
+            url: expect.stringContaining('postgresql://'),
+          })
+        );
+        expect(result.services).toContainEqual(
+          expect.objectContaining({
+            name: 'Redis',
+            url: expect.stringContaining('redis://'),
+          })
+        );
+        expect(result.services).toContainEqual(
+          expect.objectContaining({
+            name: 'MongoDB',
+            url: expect.stringContaining('mongodb+srv://'),
+          })
+        );
       });
 
       it('should handle environment-specific configurations', async () => {
@@ -261,7 +273,7 @@ describe('EnvironmentAnalyzer', () => {
         const result = await analyzer.analyze('/fake/path');
 
         expect(result.services).toHaveLength(3);
-        expect(result.services.every(s => s.name === 'Database')).toBe(true);
+        expect(result.services.every((s) => s.name === 'Database')).toBe(true);
       });
     });
   });

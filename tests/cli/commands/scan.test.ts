@@ -33,8 +33,8 @@ describe('Scan Command', () => {
       projectType: 'express' as const,
       hasPackageJson: true,
       dependencies: {
-        dependencies: { 'express': '^4.17.1' },
-        devDependencies: {}
+        dependencies: { express: '^4.17.1' },
+        devDependencies: {},
       },
       projectRoot: '/test',
       environment: {
@@ -43,9 +43,9 @@ describe('Scan Command', () => {
         services: [
           { name: 'Database', url: 'mongodb://localhost', required: true },
           { name: 'Redis', url: 'redis://localhost', required: false },
-          { name: 'RabbitMQ', url: 'amqp://localhost', required: true }
-        ]
-      }
+          { name: 'RabbitMQ', url: 'amqp://localhost', required: true },
+        ],
+      },
     };
 
     mockScanner.scan.mockResolvedValue(mockResult);
@@ -53,9 +53,15 @@ describe('Scan Command', () => {
     const command = createScanCommand();
     await command.parseAsync(['node', 'test', '.']);
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Database'));
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('RabbitMQ'));
-    expect(consoleLogSpy).not.toHaveBeenCalledWith(expect.stringContaining('Redis'));
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Database')
+    );
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect.stringContaining('RabbitMQ')
+    );
+    expect(consoleLogSpy).not.toHaveBeenCalledWith(
+      expect.stringContaining('Redis')
+    );
   });
 
   it('should handle scan errors with detailed error messages', async () => {
@@ -63,10 +69,12 @@ describe('Scan Command', () => {
     mockScanner.scan.mockRejectedValue(error);
 
     const command = createScanCommand();
-    await expect(command.parseAsync(['node', 'test', '.']))
-      .rejects
-      .toThrow('Process.exit(1)');
+    await expect(command.parseAsync(['node', 'test', '.'])).rejects.toThrow(
+      'Process.exit(1)'
+    );
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('❌ Failed to read project directory');
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      '❌ Failed to read project directory'
+    );
   });
 });
