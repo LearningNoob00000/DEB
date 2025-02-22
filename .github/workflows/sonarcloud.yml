@@ -69,7 +69,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_SCANNER_OPTS: -Xmx2048m
+          SONAR_SCANNER_OPTS: "-Xmx2048m -Dsonar.organization=spongebug -Dsonar.projectKey=SpongeBUG_DEB"
 
       - name: Check Quality Gate
         id: sonarqube-quality-gate-check
@@ -90,6 +90,17 @@ jobs:
               console.log(coverage.total.lines.pct);
             ")
             echo "**Total Coverage:** ${TOTAL_COVERAGE}%" >> $GITHUB_STEP_SUMMARY
+            
+            echo "#### Coverage Details" >> $GITHUB_STEP_SUMMARY
+            node -e "
+              const fs = require('fs');
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+              for (const [path, data] of Object.entries(coverage)) {
+                if (path !== 'total') {
+                  console.log(\`* \${path}: \${data.lines.pct}%\`);
+                }
+              }
+            " >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ Coverage report not found" >> $GITHUB_STEP_SUMMARY
           fi
