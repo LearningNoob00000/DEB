@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+## [1.0.7](https://github.com/SpongeBUG/DEB/compare/v1.0.6...v1.0.7) (2025-02-22)
+
+
+### Bug Fixes
+
+* **sonar:** correct metadata file path configuration ([fd03bdc](https://github.com/SpongeBUG/DEB/commit/fd03bdc9a23a4545647f5d081bf103ca8222a76d))
+
 ## [1.0.6](https://github.com/SpongeBUG/DEB/compare/v1.0.5...v1.0.6) (2025-02-21)
 
 
