@@ -41,21 +41,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Generate coverage in the correct format
       - name: Run Tests with Coverage
-        run: |
-          npm run test:coverage -- --coverageReporters="json-summary" --coverageReporters="text" --coverageReporters="lcov"
+        run: npm run test:coverage
         
-      # Add coverage validation using lcov info
       - name: Validate Coverage
         run: |
-          SUMMARY=$(cat coverage/coverage-summary.json 2>/dev/null || echo '{"total":{"lines":{"pct":0}}}')
-          TOTAL_COVERAGE=$(echo $SUMMARY | node -p "JSON.parse(process.stdin.readFileSync()).total.lines.pct || 0")
-          
-          echo "Total Coverage: $TOTAL_COVERAGE%"
-          
-          if (( $(echo "$TOTAL_COVERAGE < 70" | bc -l) )); then
-            echo "❌ Coverage ($TOTAL_COVERAGE%) is below minimum threshold (70%)"
+          if [ -f "coverage/coverage-summary.json" ]; then
+            TOTAL_COVERAGE=$(node -e "
+              const fs = require('fs');
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+              console.log(coverage.total.lines.pct);
+            ")
+            
+            echo "Total Coverage: $TOTAL_COVERAGE%"
+            
+            if (( $(echo "$TOTAL_COVERAGE < 70" | bc -l) )); then
+              echo "❌ Coverage ($TOTAL_COVERAGE%) is below minimum threshold (70%)"
+              exit 1
+            fi
+          else
+            echo "⚠️ No coverage report found"
             exit 1
           fi
 
@@ -73,24 +78,26 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # Add summary that works with existing coverage format
       - name: Generate Analysis Summary
         if: always()
         run: |
           echo "### SonarCloud Analysis Results 📊" >> $GITHUB_STEP_SUMMARY
           
-          if [ -f coverage/coverage-summary.json ]; then
-            SUMMARY=$(cat coverage/coverage-summary.json)
-            TOTAL_COVERAGE=$(echo $SUMMARY | node -p "JSON.parse(process.stdin.readFileSync()).total.lines.pct || 0")
-            echo "Total Coverage: $TOTAL_COVERAGE%" >> $GITHUB_STEP_SUMMARY
+          if [ -f "coverage/coverage-summary.json" ]; then
+            TOTAL_COVERAGE=$(node -e "
+              const fs = require('fs');
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+              console.log(coverage.total.lines.pct);
+            ")
+            echo "**Total Coverage:** ${TOTAL_COVERAGE}%" >> $GITHUB_STEP_SUMMARY
           else
-            echo "Coverage report not found" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Coverage report not found" >> $GITHUB_STEP_SUMMARY
           fi
           
           if [[ "${{ steps.sonarqube-quality-gate-check.outcome }}" == "success" ]]; then
-            echo "✅ Quality Gate: Passed" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Quality Gate:** Passed" >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ Quality Gate: Failed" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **Quality Gate:** Failed" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "🔗 [View Full Report](https://sonarcloud.io/dashboard?id=SpongeBUG_DEB)" >> $GITHUB_STEP_SUMMARY
