@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+## [1.0.8](https://github.com/SpongeBUG/DEB/compare/v1.0.7...v1.0.8) (2025-02-22)
+
+
+### Bug Fixes
+
+* **sonar:** correct working directory path ([894cc2b](https://github.com/SpongeBUG/DEB/commit/894cc2b931cef23d7dddc6ab906f3073ab1efec1))
+
 ## [1.0.7](https://github.com/SpongeBUG/DEB/compare/v1.0.6...v1.0.7) (2025-02-22)
 
 
