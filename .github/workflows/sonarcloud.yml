@@ -1,3 +1,4 @@
+# sonarcloud.yml
 name: SonarCloud
 on:
   push:
@@ -13,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -29,5 +30,9 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   
+        with:
+          args: >
+            -Dsonar.projectVersion=${{ github.ref_name }}
+            -Dsonar.scm.provider=git
