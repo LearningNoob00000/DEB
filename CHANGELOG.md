@@ -2,6 +2,13 @@
 
 *This is a beta release. APIs may change before the stable release.*
 
+## [1.0.9](https://github.com/SpongeBUG/DEB/compare/v1.0.8...v1.0.9) (2025-02-22)
+
+
+### Bug Fixes
+
+* sonarcloud configuration ([db9f7a8](https://github.com/SpongeBUG/DEB/commit/db9f7a8b5a9c9e6833dcf664fc68d1f8f3b72300))
+
 ## [1.0.8](https://github.com/SpongeBUG/DEB/compare/v1.0.7...v1.0.8) (2025-02-22)
 
 
